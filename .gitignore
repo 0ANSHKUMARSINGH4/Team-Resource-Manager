@@ -1,0 +1,12 @@
+# OS / IDE
+.idea/
+.vscode/
+
+# Backend
+backend/target/
+
+# Frontend
+frontend/node_modules/
+
+# Logs
+*.log

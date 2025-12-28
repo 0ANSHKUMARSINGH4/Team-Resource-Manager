@@ -1,0 +1,20 @@
+server:
+  port: 8080
+
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/team_manager_db?useSSL=false&serverTimezone=UTC
+    username: root
+    password: Ansh@4209
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop   # 🔥 IMPORTANT
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+  jackson:
+    serialization:
+      fail-on-empty-beans: false
