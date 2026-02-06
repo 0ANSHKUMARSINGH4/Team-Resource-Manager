@@ -114,7 +114,7 @@ function App() {
   }, [darkMode]);
 
   // Data Fetching
-  const API_URL = "http://localhost:8080/api";
+  const API_URL = "https://team-resource-backend.onrender.com";
   const refreshData = async () => {
     try {
       const empRes = await axios.get(`${API_URL}/employees`);
