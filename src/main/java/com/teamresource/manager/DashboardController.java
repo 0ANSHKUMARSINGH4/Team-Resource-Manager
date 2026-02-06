@@ -6,7 +6,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api")
-@CrossOrigin(origins = "http://localhost:5173") // Allow React to access this
+@CrossOrigin(origins = "*") // Allow React to access this
 public class DashboardController {
 
     private final EmployeeRepository employeeRepository;
