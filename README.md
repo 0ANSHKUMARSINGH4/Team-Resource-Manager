@@ -30,9 +30,7 @@ A Full-Stack Enterprise Dashboard for managing employees, projects, and financia
 
 | **Dashboard** | **Dark Mode** |
 |:---:|:---:|
-| ![Dashboard](https://via.placeholder.com/400x200?text=Dashboard+View) | ![Dark Mode](https://via.placeholder.com/400x200?text=Dark+Mode+View) |
-
-*(You can replace these links with actual screenshots from your repo later)*
+| ![Dashboard](./screenshots/dashboard.png) | ![Dark Mode](./screenshots/darkmode.png) |
 
 ## 🔧 Getting Started
 
