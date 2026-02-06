@@ -1,14 +1,18 @@
-/mvnw text eol=lf
-*.cmd text eol=crlf
+# 1. IGNORE MASSIVE AUTO-GENERATED FILES (The main culprits)
+frontend/package-lock.json linguist-generated=true
+package-lock.json linguist-generated=true
+frontend/yarn.lock linguist-generated=true
 
-# Ignore package-lock files from language stats (Crucial fix)
-frontend/package-lock.json linguist-generated
+# 2. IGNORE CONFIGURATION FILES (Don't count these as "JavaScript")
+tailwind.config.js linguist-generated=true
+postcss.config.js linguist-generated=true
+vite.config.js linguist-generated=true
+.eslintrc.cjs linguist-generated=true
 
-# Ignore build artifacts
-frontend/dist/* linguist-generated
-frontend/build/* linguist-generated
+# 3. IGNORE CSS & ASSETS (Focus on Logic)
+*.css linguist-vendored=true
+*.svg linguist-vendored=true
+*.html linguist-vendored=true
 
-# (Optional) If you want to highlight Java even more,
-# you can treat CSS/HTML as 'vendored' (library code) so they don't count:
-*.css linguist-vendored
-*.html linguist-vendored
+# 4. IGNORE JSON DATA
+*.json linguist-generated=true
