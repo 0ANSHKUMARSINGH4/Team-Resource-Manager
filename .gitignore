@@ -1,0 +1,63 @@
+# --------------------
+# JAVA / MAVEN (Backend)
+# --------------------
+HELP.md
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+# --------------------
+# FRONTEND (React/Node)
+# --------------------
+# Crucial: Ignore the massive dependency folder
+frontend/node_modules/
+# Ignore the production build output
+frontend/dist/
+# Ignore local environment variables (security)
+frontend/.env
+frontend/.env.local
+frontend/.env.development.local
+frontend/.env.test.local
+frontend/.env.production.local
+# Ignore logs
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+
+# --------------------
+# IDE SETTINGS
+# --------------------
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### VS Code ###
+.vscode/
+
+# --------------------
+# OS FILES
+# --------------------
+.DS_Store
+Thumbs.db
