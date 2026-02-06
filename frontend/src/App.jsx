@@ -4,7 +4,7 @@ import {
   LayoutDashboard, Wallet, Users, Briefcase, Calendar as CalendarIcon,
   Settings, User, Bell, Search, Plus, Trash2, X, Camera,
   Clock, CheckCircle, DollarSign, Moon, Sun, Shield, LogOut,
-  TrendingUp, TrendingDown, ChevronDown
+  TrendingUp, TrendingDown, ChevronDown, Menu // Added Menu icon
 } from 'lucide-react';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
@@ -26,11 +26,11 @@ const getAvatarColor = (name) => {
 const getInitials = (name) => name ? name.charAt(0).toUpperCase() : '?';
 
 // --- Sub-Components ---
-const SidebarItem = ({ icon: Icon, label, activePage, setActivePage }) => {
+const SidebarItem = ({ icon: Icon, label, activePage, setActivePage, onClick }) => {
   const isActive = activePage === label;
   return (
     <div
-      onClick={() => setActivePage(label)}
+      onClick={() => { setActivePage(label); if (onClick) onClick(); }}
       className={`flex items-center space-x-3 px-6 py-3 cursor-pointer mb-2 transition-colors border-l-4 ${
         isActive
           ? 'border-primary text-primary bg-indigo-50 dark:bg-slate-800 dark:text-indigo-400'
@@ -81,7 +81,8 @@ function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
-  const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false); // Dropdown State
+  const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false); // New Mobile State
 
   // Forms & State
   const [formData, setFormData] = useState({ name: '', department: '', age: '', status: 'Contract' });
@@ -114,7 +115,9 @@ function App() {
   }, [darkMode]);
 
   // Data Fetching
-  const API_URL = "https://team-resource-backend.onrender.com";
+  // const API_URL = "http://localhost:8080/api";
+  const API_URL = "https://team-resource-backend.onrender.com/api";
+
   const refreshData = async () => {
     try {
       const empRes = await axios.get(`${API_URL}/employees`);
@@ -146,7 +149,6 @@ function App() {
     }
   };
 
-  // Click Outside to Close Dropdown
   const dropdownRef = useRef(null);
   useEffect(() => {
     function handleClickOutside(event) {
@@ -167,12 +169,12 @@ function App() {
     { name: 'Week 1', income: 4000, expense: 2400 }, { name: 'Week 2', income: 3000, expense: 1398 },
     { name: 'Week 3', income: 2000, expense: 9800 }, { name: 'Week 4', income: 2780, expense: 3908 },
   ];
-  const COLORS = ['#10B981', '#6366F1']; // Green & Purple
+  const COLORS = ['#10B981', '#6366F1'];
 
   return (
-    <div className="flex h-screen bg-[#F8F9FD] dark:bg-slate-900 font-sans transition-colors duration-300">
+    <div className="flex h-screen bg-[#F8F9FD] dark:bg-slate-900 font-sans transition-colors duration-300 overflow-hidden">
 
-      {/* Sidebar */}
+      {/* --- DESKTOP SIDEBAR (Hidden on Mobile) --- */}
       <aside className="w-64 bg-white dark:bg-slate-800 border-r border-gray-200 dark:border-slate-700 hidden md:flex flex-col transition-colors z-20">
         <div className="p-6 flex items-center space-x-3 mb-6">
           <div className="w-8 h-8 bg-gradient-to-br from-primary to-indigo-700 rounded-lg flex items-center justify-center text-white font-bold shadow-md text-xs">TRM</div>
@@ -184,12 +186,7 @@ function App() {
           {['Dashboard', 'Finance', 'Employees', 'Projects', 'Calendar'].map(item => (
             <SidebarItem
               key={item}
-              icon={
-                item === 'Dashboard' ? LayoutDashboard :
-                item === 'Finance' ? Wallet :
-                item === 'Employees' ? Users :
-                item === 'Projects' ? Briefcase : CalendarIcon
-              }
+              icon={item === 'Dashboard' ? LayoutDashboard : item === 'Finance' ? Wallet : item === 'Employees' ? Users : item === 'Projects' ? Briefcase : CalendarIcon}
               label={item}
               activePage={activePage}
               setActivePage={setActivePage}
@@ -197,20 +194,72 @@ function App() {
           ))}
         </div>
 
-        {/* Bottom Navigation (Profile & Settings) */}
+        {/* Bottom Navigation */}
         <div className="p-4 border-t border-gray-100 dark:border-slate-700 space-y-1">
           <SidebarItem icon={User} label="Profile" activePage={activePage} setActivePage={setActivePage} />
           <SidebarItem icon={Settings} label="Settings" activePage={activePage} setActivePage={setActivePage} />
         </div>
       </aside>
 
+      {/* --- MOBILE SIDEBAR DRAWER (New Feature) --- */}
+      {isMobileMenuOpen && (
+        <div className="fixed inset-0 z-50 flex">
+          {/* Backdrop */}
+          <div
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity"
+            onClick={() => setIsMobileMenuOpen(false)}
+          />
+
+          {/* Mobile Menu Content */}
+          <div className="relative bg-white dark:bg-slate-800 w-64 h-full shadow-2xl flex flex-col transition-transform transform translate-x-0">
+            <div className="p-4 flex justify-between items-center border-b border-gray-100 dark:border-slate-700">
+               <div className="flex items-center space-x-2">
+                 <div className="w-6 h-6 bg-gradient-to-br from-primary to-indigo-700 rounded flex items-center justify-center text-white font-bold text-[10px]">TRM</div>
+                 <span className="font-bold text-gray-800 dark:text-white">Menu</span>
+               </div>
+               <button onClick={() => setIsMobileMenuOpen(false)} className="p-2 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-full">
+                 <X size={20} className="text-gray-500 dark:text-slate-300" />
+               </button>
+            </div>
+
+            <div className="flex-1 overflow-y-auto py-4">
+               {['Dashboard', 'Finance', 'Employees', 'Projects', 'Calendar'].map(item => (
+                  <SidebarItem
+                    key={item}
+                    icon={item === 'Dashboard' ? LayoutDashboard : item === 'Finance' ? Wallet : item === 'Employees' ? Users : item === 'Projects' ? Briefcase : CalendarIcon}
+                    label={item}
+                    activePage={activePage}
+                    setActivePage={setActivePage}
+                    onClick={() => setIsMobileMenuOpen(false)} // Close menu on click
+                  />
+               ))}
+            </div>
+
+            <div className="p-4 border-t border-gray-100 dark:border-slate-700 space-y-1">
+               <SidebarItem icon={User} label="Profile" activePage={activePage} setActivePage={setActivePage} onClick={() => setIsMobileMenuOpen(false)} />
+               <SidebarItem icon={Settings} label="Settings" activePage={activePage} setActivePage={setActivePage} onClick={() => setIsMobileMenuOpen(false)} />
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Main Content */}
-      <main className="flex-1 overflow-y-auto relative">
+      <main className="flex-1 overflow-y-auto relative flex flex-col">
 
         {/* Navbar */}
-        <header className="bg-white dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700 px-8 py-4 flex justify-between items-center sticky top-0 z-10 transition-colors">
-          <h2 className="text-2xl font-bold text-gray-800 dark:text-white">{activePage}</h2>
-          <div className="flex items-center space-x-4 relative">
+        <header className="bg-white dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700 px-4 md:px-8 py-4 flex justify-between items-center sticky top-0 z-10 transition-colors">
+          <div className="flex items-center gap-3">
+             {/* Mobile Menu Toggle Button */}
+             <button
+               onClick={() => setIsMobileMenuOpen(true)}
+               className="md:hidden p-2 text-gray-500 hover:bg-gray-100 dark:text-slate-300 dark:hover:bg-slate-700 rounded-lg"
+             >
+               <Menu size={24} />
+             </button>
+             <h2 className="text-xl md:text-2xl font-bold text-gray-800 dark:text-white truncate">{activePage}</h2>
+          </div>
+
+          <div className="flex items-center space-x-2 md:space-x-4 relative">
 
             {/* Dark Mode Toggle */}
             <button
@@ -224,10 +273,10 @@ function App() {
             <div ref={dropdownRef} className="relative">
               <div
                 onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
-                className="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-700 cursor-pointer transition-colors group select-none"
+                className="flex items-center space-x-2 md:space-x-3 p-1 md:p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-700 cursor-pointer transition-colors group select-none"
               >
-                <div className="w-10 h-10 rounded-full bg-indigo-100 dark:bg-slate-600 flex items-center justify-center text-primary dark:text-indigo-400 overflow-hidden">
-                  <User size={20} />
+                <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-indigo-100 dark:bg-slate-600 flex items-center justify-center text-primary dark:text-indigo-400 overflow-hidden">
+                  <User size={18} />
                 </div>
                 <div className="hidden lg:block text-left">
                   <p className="text-sm font-bold text-gray-700 dark:text-gray-200 group-hover:text-primary transition-colors">{managerName}</p>
@@ -238,7 +287,7 @@ function App() {
 
               {/* Dropdown Menu */}
               {isProfileMenuOpen && (
-                <div className="absolute right-0 top-16 w-56 bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-gray-100 dark:border-slate-700 py-2 z-50 animate-in fade-in slide-in-from-top-2">
+                <div className="absolute right-0 top-14 w-56 bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-gray-100 dark:border-slate-700 py-2 z-50 animate-in fade-in slide-in-from-top-2">
                    <div className="px-4 py-3 border-b border-gray-100 dark:border-slate-700 mb-2">
                      <p className="text-sm font-bold text-gray-800 dark:text-white">Signed in as</p>
                      <p className="text-xs text-gray-500 dark:text-slate-400 truncate">{managerRole}</p>
@@ -270,19 +319,19 @@ function App() {
         </header>
 
         {/* Content Body */}
-        <div className="p-8 max-w-7xl mx-auto space-y-8">
+        <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-6 md:space-y-8 w-full">
 
           {/* --- DASHBOARD --- */}
           {activePage === 'Dashboard' && (
             <>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
                 <StatCard title="Total Employees" value={stats.totalEmployees} subtext="Active Members" trend="+10%" trendUp={true} />
                 <StatCard title="Active Tasks" value={stats.jobViews} subtext="In Progress" trend="+22%" trendUp={true} />
                 <StatCard title="Pending" value={stats.jobApplied} subtext="Review" trend="+12%" trendUp={true} />
                 <StatCard title="On Leave" value={stats.resigned} subtext="Unavailable" trend="-2%" trendUp={false} />
               </div>
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <Card className="lg:col-span-2 p-6 h-80">
+                <Card className="lg:col-span-2 p-4 md:p-6 h-80">
                   <h3 className="font-bold text-lg text-gray-800 dark:text-white mb-4">Task Trends</h3>
                   <ResponsiveContainer width="100%" height="90%">
                     <BarChart data={barData} barSize={20}>
@@ -353,22 +402,24 @@ function App() {
                    <div className="p-6 border-b border-gray-100 dark:border-slate-700">
                       <h3 className="font-bold text-lg text-gray-800 dark:text-white">Recent Transactions</h3>
                    </div>
-                   <table className="w-full text-left text-sm text-gray-600 dark:text-slate-300">
-                      <tbody className="divide-y divide-gray-100 dark:divide-slate-700">
-                        {transactions.map(t => (
-                          <tr key={t.id} className="hover:bg-gray-50 dark:hover:bg-slate-700/50">
-                            <td className="px-6 py-4 font-medium">{t.desc}</td>
-                            <td className="px-6 py-4 text-xs text-gray-400">{t.date}</td>
-                            <td className={`px-6 py-4 font-bold ${t.amount > 0 ? 'text-green-600 dark:text-green-400' : 'text-gray-800 dark:text-slate-200'}`}>
-                              {t.amount > 0 ? '+' : ''}{t.amount}
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                   </table>
+                   <div className="overflow-x-auto">
+                     <table className="w-full text-left text-sm text-gray-600 dark:text-slate-300">
+                        <tbody className="divide-y divide-gray-100 dark:divide-slate-700">
+                          {transactions.map(t => (
+                            <tr key={t.id} className="hover:bg-gray-50 dark:hover:bg-slate-700/50">
+                              <td className="px-6 py-4 font-medium whitespace-nowrap">{t.desc}</td>
+                              <td className="px-6 py-4 text-xs text-gray-400 whitespace-nowrap">{t.date}</td>
+                              <td className={`px-6 py-4 font-bold whitespace-nowrap ${t.amount > 0 ? 'text-green-600 dark:text-green-400' : 'text-gray-800 dark:text-slate-200'}`}>
+                                {t.amount > 0 ? '+' : ''}{t.amount}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                     </table>
+                   </div>
                  </Card>
                  {/* Finance Chart */}
-                 <Card className="p-6">
+                 <Card className="p-6 h-80">
                     <h3 className="font-bold text-lg text-gray-800 dark:text-white mb-4">Cash Flow Analysis</h3>
                     <ResponsiveContainer width="100%" height="80%">
                       <AreaChart data={financeData}>
@@ -399,7 +450,7 @@ function App() {
               <div className="flex justify-between items-center">
                  <h2 className="text-xl font-bold text-gray-800 dark:text-white">Kanban Board</h2>
                  <button onClick={() => setIsProjectModalOpen(true)} className="bg-primary text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-indigo-700 flex items-center gap-2">
-                   <Plus size={16} /> New Project
+                   <Plus size={16} /> <span className="hidden sm:inline">New Project</span>
                  </button>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -439,16 +490,16 @@ function App() {
 
           {/* --- CALENDAR --- */}
           {activePage === 'Calendar' && (
-            <Card className="p-8">
+            <Card className="p-4 md:p-8">
               <div className="flex justify-between items-center mb-8">
-                <h2 className="text-2xl font-bold text-gray-800 dark:text-white">February 2026</h2>
+                <h2 className="text-xl md:text-2xl font-bold text-gray-800 dark:text-white">February 2026</h2>
                 <div className="flex gap-2">
                   <span className="flex items-center gap-1 text-sm text-gray-500 dark:text-slate-400"><div className="w-3 h-3 rounded-full bg-primary"></div> Deadline</span>
                 </div>
               </div>
-              <div className="grid grid-cols-7 gap-4 text-center">
+              <div className="grid grid-cols-7 gap-1 md:gap-4 text-center">
                 {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(d => (
-                  <div key={d} className="font-bold text-gray-400 text-sm mb-4">{d}</div>
+                  <div key={d} className="font-bold text-gray-400 text-xs md:text-sm mb-4">{d}</div>
                 ))}
                 {/* Calendar Grid Logic */}
                 {[...Array(28)].map((_, i) => {
@@ -456,13 +507,14 @@ function App() {
                   const dateStr = `2026-02-${day.toString().padStart(2, '0')}`;
                   const hasDeadline = projects.some(p => p.deadline === dateStr);
                   return (
-                    <div key={i} className={`h-24 rounded-xl border ${hasDeadline ? 'border-primary bg-indigo-50 dark:bg-slate-700/50' : 'border-gray-100 dark:border-slate-700 bg-gray-50 dark:bg-slate-800'} p-2 flex flex-col justify-between hover:border-indigo-300 transition-colors`}>
-                      <span className={`text-sm font-bold ${hasDeadline ? 'text-primary' : 'text-gray-500 dark:text-slate-400'}`}>{day}</span>
+                    <div key={i} className={`h-16 md:h-24 rounded-xl border ${hasDeadline ? 'border-primary bg-indigo-50 dark:bg-slate-700/50' : 'border-gray-100 dark:border-slate-700 bg-gray-50 dark:bg-slate-800'} p-1 md:p-2 flex flex-col justify-between hover:border-indigo-300 transition-colors`}>
+                      <span className={`text-xs md:text-sm font-bold ${hasDeadline ? 'text-primary' : 'text-gray-500 dark:text-slate-400'}`}>{day}</span>
                       {hasDeadline && (
-                        <div className="bg-primary text-white text-[10px] rounded px-1 py-1 truncate">
+                        <div className="bg-primary text-white text-[8px] md:text-[10px] rounded px-1 py-1 truncate hidden sm:block">
                           {projects.find(p => p.deadline === dateStr).title}
                         </div>
                       )}
+                      {hasDeadline && <div className="w-1.5 h-1.5 bg-primary rounded-full mx-auto sm:hidden"></div>}
                     </div>
                   );
                 })}
@@ -529,31 +581,33 @@ function App() {
                   <Plus size={16} /> <span>Add</span>
                 </button>
               </div>
-              <table className="w-full text-left text-sm text-gray-600 dark:text-slate-300">
-                <thead className="bg-gray-50 dark:bg-slate-700 text-gray-500 dark:text-slate-400">
-                  <tr><th className="px-6 py-4">Name</th><th className="px-6 py-4">Dept</th><th className="px-6 py-4">Status</th><th className="px-6 py-4">Action</th></tr>
-                </thead>
-                <tbody className="divide-y divide-gray-100 dark:divide-slate-700">
-                  {employees.map((emp) => (
-                    <tr key={emp.id} className="hover:bg-gray-50 dark:hover:bg-slate-700/50">
-                      <td className="px-6 py-4 flex items-center gap-3 font-medium text-gray-900 dark:text-white">
-                        <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${getAvatarColor(emp.name)}`}>{getInitials(emp.name)}</div>
-                        {emp.name}
-                      </td>
-                      <td className="px-6 py-4">{emp.department}</td>
-                      <td className="px-6 py-4"><Badge status={emp.status} /></td>
-                      <td className="px-6 py-4"><button onClick={() => handleDelete(emp.id)} className="text-gray-400 hover:text-red-500"><Trash2 size={16} /></button></td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-sm text-gray-600 dark:text-slate-300">
+                  <thead className="bg-gray-50 dark:bg-slate-700 text-gray-500 dark:text-slate-400">
+                    <tr><th className="px-6 py-4">Name</th><th className="px-6 py-4">Dept</th><th className="px-6 py-4">Status</th><th className="px-6 py-4">Action</th></tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-100 dark:divide-slate-700">
+                    {employees.map((emp) => (
+                      <tr key={emp.id} className="hover:bg-gray-50 dark:hover:bg-slate-700/50">
+                        <td className="px-6 py-4 flex items-center gap-3 font-medium text-gray-900 dark:text-white whitespace-nowrap">
+                          <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${getAvatarColor(emp.name)}`}>{getInitials(emp.name)}</div>
+                          {emp.name}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">{emp.department}</td>
+                        <td className="px-6 py-4 whitespace-nowrap"><Badge status={emp.status} /></td>
+                        <td className="px-6 py-4 whitespace-nowrap"><button onClick={() => handleDelete(emp.id)} className="text-gray-400 hover:text-red-500"><Trash2 size={16} /></button></td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </Card>
           )}
         </div>
 
         {/* --- MODALS --- */}
         {isProjectModalOpen && (
-          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
             <Card className="w-full max-w-md p-6">
               <h3 className="text-xl font-bold mb-4 dark:text-white">New Project</h3>
               <form onSubmit={handleAddProject} className="space-y-4">
