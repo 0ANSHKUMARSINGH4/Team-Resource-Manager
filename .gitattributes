@@ -1,2 +1,14 @@
 /mvnw text eol=lf
 *.cmd text eol=crlf
+
+# Ignore package-lock files from language stats (Crucial fix)
+frontend/package-lock.json linguist-generated
+
+# Ignore build artifacts
+frontend/dist/* linguist-generated
+frontend/build/* linguist-generated
+
+# (Optional) If you want to highlight Java even more,
+# you can treat CSS/HTML as 'vendored' (library code) so they don't count:
+*.css linguist-vendored
+*.html linguist-vendored
