@@ -1,0 +1,19 @@
+CREATE TABLE employees (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    department VARCHAR(255),
+    designation VARCHAR(255),
+    age INT,
+    phone VARCHAR(50),
+    status VARCHAR(50) DEFAULT 'PERMANENT',
+    work_mode VARCHAR(50) DEFAULT 'ON_SITE',
+    discipline_score INT DEFAULT 100,
+    join_date DATE,
+    salary DECIMAL(12, 2),
+    manager_id BIGINT,
+    avatar_url VARCHAR(500),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_employee_manager FOREIGN KEY (manager_id) REFERENCES users(id)
+);
