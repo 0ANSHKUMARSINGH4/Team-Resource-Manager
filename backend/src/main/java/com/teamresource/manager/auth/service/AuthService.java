@@ -6,6 +6,7 @@ import com.teamresource.manager.auth.dto.RegisterRequest;
 import com.teamresource.manager.auth.entity.User;
 import com.teamresource.manager.auth.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -22,7 +23,7 @@ public class AuthService {
 
     public AuthResponse register(RegisterRequest request) {
         if (userRepository.existsByEmail(request.getEmail())) {
-            throw new RuntimeException("Email already in use");
+            throw new DataIntegrityViolationException("Email already in use: " + request.getEmail());
         }
 
         User user = User.builder()

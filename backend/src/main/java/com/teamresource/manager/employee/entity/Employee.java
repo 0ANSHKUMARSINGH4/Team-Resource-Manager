@@ -63,6 +63,7 @@ public class Employee extends BaseEntity {
     @Column(name = "join_date")
     private LocalDate joinDate;
 
+    @Column(precision = 12, scale = 2)
     private BigDecimal salary;
 
     @Column(name = "manager_id")

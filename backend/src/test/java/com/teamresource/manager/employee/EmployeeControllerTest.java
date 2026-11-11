@@ -1,6 +1,7 @@
 package com.teamresource.manager.employee;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
+import com.teamresource.manager.auth.repository.UserRepository;
 import com.teamresource.manager.common.dto.PagedResponse;
 import com.teamresource.manager.config.JwtAuthenticationFilter;
 import com.teamresource.manager.employee.controller.EmployeeController;
@@ -11,8 +12,8 @@ import com.teamresource.manager.employee.service.EmployeeService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -44,6 +45,9 @@ class EmployeeControllerTest {
 
     @MockitoBean
     private JwtAuthenticationFilter jwtAuthenticationFilter;
+
+    @MockitoBean
+    private UserRepository userRepository;
 
     @Test
     @DisplayName("GET /api/v1/employees returns 200 and paginated list")

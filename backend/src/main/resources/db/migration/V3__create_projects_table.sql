@@ -1,7 +1,7 @@
 CREATE TABLE projects (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
-    description CLOB,
+    description TEXT,
     status VARCHAR(50) DEFAULT 'TODO',
     start_date DATE,
     deadline DATE,
