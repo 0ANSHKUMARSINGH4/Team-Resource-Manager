@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Plus } from 'lucide-react'
+import { Plus, Users, UserCheck, Briefcase, Award } from 'lucide-react'
 import { toast } from 'sonner'
 import { useDashboardStats } from '../hooks'
 import { useEmployees, useCreateEmployee, useDeleteEmployee } from '@/features/employees/hooks'
@@ -43,7 +43,25 @@ export const DashboardPage: React.FC = () => {
   }
 
   const employees = pagedEmployees?.content || []
-  const totalEmployees = stats?.totalEmployees ?? employees.length
+  const totalEmployees = stats?.totalEmployees ?? pagedEmployees?.totalElements ?? employees.length
+  const permanentCount = stats?.byStatus?.PERMANENT ?? 0
+  const contractAndInternCount =
+    (stats?.byStatus?.CONTRACT ?? 0) + (stats?.byStatus?.INTERN ?? 0)
+  const permanentRate = stats?.permanentRate ?? 0
+  const avgDiscipline = stats?.averageDisciplineScore ?? 0
+
+  const onSiteCount = stats?.byWorkMode?.ON_SITE ?? 0
+  const remoteCount = stats?.byWorkMode?.REMOTE ?? 0
+  const hybridCount = stats?.byWorkMode?.HYBRID ?? 0
+  const hasWorkModeData = onSiteCount + remoteCount + hybridCount > 0
+
+  const distributionData = hasWorkModeData
+    ? [
+        { name: 'On-Site', value: onSiteCount, color: '#10B981' },
+        { name: 'Remote', value: remoteCount, color: '#6366F1' },
+        { name: 'Hybrid', value: hybridCount, color: '#F59E0B' },
+      ].filter((item) => item.value > 0)
+    : undefined
 
   return (
     <div className="space-y-6 md:space-y-8">
@@ -53,29 +71,28 @@ export const DashboardPage: React.FC = () => {
           title="Total Employees"
           value={totalEmployees}
           subtext="Active Members"
-          trend="+10%"
-          trendUp={true}
+          icon={Users}
         />
         <StatCard
-          title="Active Tasks"
-          value={stats?.jobViews ?? 3342}
-          subtext="In Progress"
-          trend="+22%"
-          trendUp={true}
+          title="Permanent Staff"
+          value={permanentCount}
+          subtext="Full-time workforce"
+          trend={`${permanentRate}%`}
+          trendUp={permanentRate >= 50}
+          icon={UserCheck}
         />
         <StatCard
-          title="Pending"
-          value={stats?.jobApplied ?? 77}
-          subtext="Review"
-          trend="+12%"
-          trendUp={true}
+          title="Contract & Intern"
+          value={contractAndInternCount}
+          subtext="Flexible capacity"
+          icon={Briefcase}
         />
         <StatCard
-          title="On Leave"
-          value={stats?.resigned ?? 17}
-          subtext="Unavailable"
-          trend="-2%"
-          trendUp={false}
+          title="Avg. Discipline"
+          value={`${avgDiscipline}%`}
+          subtext="Team performance score"
+          trendUp={avgDiscipline >= 80}
+          icon={Award}
         />
       </div>
 
@@ -91,17 +108,21 @@ export const DashboardPage: React.FC = () => {
         {/* Distribution Card with Legend */}
         <Card className="p-6 flex flex-col items-start h-80">
           <h3 className="font-bold text-lg text-gray-800 dark:text-white mb-2">Distribution</h3>
-          <DistributionChart total={totalEmployees} />
+          <DistributionChart data={distributionData} total={totalEmployees} />
 
           {/* Chart Legend */}
-          <div className="w-full flex justify-center gap-6 mt-4 pt-2 border-t border-gray-50 dark:border-slate-700">
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded-full bg-emerald-500"></div>
-              <span className="text-sm font-medium text-gray-500 dark:text-slate-400">On-Site</span>
+          <div className="w-full flex justify-center gap-4 mt-4 pt-2 border-t border-gray-50 dark:border-slate-700">
+            <div className="flex items-center gap-1.5">
+              <div className="w-2.5 h-2.5 rounded-full bg-emerald-500"></div>
+              <span className="text-xs font-medium text-gray-500 dark:text-slate-400">On-Site</span>
             </div>
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded-full bg-indigo-500"></div>
-              <span className="text-sm font-medium text-gray-500 dark:text-slate-400">Remote</span>
+            <div className="flex items-center gap-1.5">
+              <div className="w-2.5 h-2.5 rounded-full bg-indigo-500"></div>
+              <span className="text-xs font-medium text-gray-500 dark:text-slate-400">Remote</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <div className="w-2.5 h-2.5 rounded-full bg-amber-500"></div>
+              <span className="text-xs font-medium text-gray-500 dark:text-slate-400">Hybrid</span>
             </div>
           </div>
         </Card>

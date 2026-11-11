@@ -108,7 +108,7 @@ export const Header: React.FC = () => {
               <div className="px-4 py-3 border-b border-gray-100 dark:border-slate-700 mb-2">
                 <p className="text-sm font-bold text-gray-800 dark:text-white">Signed in as</p>
                 <p className="text-xs text-gray-500 dark:text-slate-400 truncate">
-                  {user?.email || 'admin@teamresource.com'}
+                  {user?.email || 'admin@trm.com'}
                 </p>
               </div>
               <button

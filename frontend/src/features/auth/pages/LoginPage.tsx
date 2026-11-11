@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { toast } from 'sonner'
-import { Lock, Mail, ArrowRight } from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
 import { login as loginApi } from '../api'
 import { useAuthStore } from '../store'
 import { Input } from '@/components/ui/Input'
@@ -54,8 +54,8 @@ export const LoginPage: React.FC = () => {
   }
 
   const fillDemoCredentials = () => {
-    setValue('email', 'admin@teamresource.com')
-    setValue('password', 'password123')
+    setValue('email', 'admin@trm.com')
+    setValue('password', 'admin123')
   }
 
   return (

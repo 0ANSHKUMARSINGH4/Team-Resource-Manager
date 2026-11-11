@@ -7,8 +7,8 @@ export interface ApiError {
 
 export interface PagedResponse<T> {
   content: T[]
-  pageNumber: number
-  pageSize: number
+  page: number
+  size: number
   totalElements: number
   totalPages: number
   last: boolean

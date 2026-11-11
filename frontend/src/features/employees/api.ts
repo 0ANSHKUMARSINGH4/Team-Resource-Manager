@@ -16,8 +16,8 @@ export async function getEmployees(filters?: EmployeeFilters): Promise<PagedResp
   if (Array.isArray(response.data)) {
     return {
       content: response.data,
-      pageNumber: 0,
-      pageSize: response.data.length,
+      page: 0,
+      size: response.data.length,
       totalElements: response.data.length,
       totalPages: 1,
       last: true,

@@ -14,6 +14,7 @@ interface EmployeeFiltersProps {
 const DEPARTMENTS = [
   { value: '', label: 'All Departments' },
   { value: 'Engineering', label: 'Engineering' },
+  { value: 'Product', label: 'Product' },
   { value: 'Design', label: 'Design' },
   { value: 'Marketing', label: 'Marketing' },
   { value: 'HR', label: 'HR' },
@@ -23,9 +24,9 @@ const DEPARTMENTS = [
 
 const STATUSES = [
   { value: '', label: 'All Statuses' },
-  { value: 'Permanent', label: 'Permanent' },
-  { value: 'Contract', label: 'Contract' },
-  { value: 'Intern', label: 'Intern' },
+  { value: 'PERMANENT', label: 'Permanent' },
+  { value: 'CONTRACT', label: 'Contract' },
+  { value: 'INTERN', label: 'Intern' },
 ]
 
 export const EmployeeFilters: React.FC<EmployeeFiltersProps> = ({

@@ -1,11 +1,10 @@
 export interface DashboardStats {
   totalEmployees: number
-  jobViews: number
-  jobApplied: number
-  resigned: number
-  permanentCount?: number
-  contractCount?: number
-  permanentRate?: string
+  byDepartment?: Record<string, number>
+  byStatus?: Record<string, number>
+  byWorkMode?: Record<string, number>
+  permanentRate?: number
+  averageDisciplineScore?: number
 }
 
 export interface TaskTrend {

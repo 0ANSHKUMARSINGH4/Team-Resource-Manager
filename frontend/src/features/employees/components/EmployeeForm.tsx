@@ -9,12 +9,12 @@ import { Button } from '@/components/ui/Button'
 
 const employeeSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),
-  email: z.string().email('Invalid email address').optional().or(z.literal('')),
+  email: z.string().email('Please enter a valid email address'),
   department: z.string().min(1, 'Please select a department'),
   designation: z.string().optional(),
-  age: z.coerce.number().min(18, 'Age must be at least 18').max(70, 'Age must be at most 70'),
-  status: z.enum(['Permanent', 'Contract', 'Intern', 'PERMANENT', 'CONTRACT', 'INTERN']),
-  workMode: z.string().optional(),
+  age: z.number({ invalid_type_error: 'Age must be a number' }).min(16, 'Age must be at least 16').max(100, 'Age must be at most 100'),
+  status: z.enum(['PERMANENT', 'CONTRACT', 'INTERN']),
+  workMode: z.enum(['ON_SITE', 'REMOTE', 'HYBRID']),
 })
 
 type EmployeeFormValues = z.infer<typeof employeeSchema>
@@ -29,6 +29,7 @@ interface EmployeeFormProps {
 const DEPARTMENTS = [
   { value: '', label: 'Select Department' },
   { value: 'Engineering', label: 'Engineering' },
+  { value: 'Product', label: 'Product' },
   { value: 'Design', label: 'Design' },
   { value: 'Marketing', label: 'Marketing' },
   { value: 'HR', label: 'Human Resources' },
@@ -37,10 +38,21 @@ const DEPARTMENTS = [
 ]
 
 const STATUSES = [
-  { value: 'Permanent', label: 'Permanent' },
-  { value: 'Contract', label: 'Contract' },
-  { value: 'Intern', label: 'Intern' },
+  { value: 'PERMANENT', label: 'Permanent' },
+  { value: 'CONTRACT', label: 'Contract' },
+  { value: 'INTERN', label: 'Intern' },
 ]
+
+const WORK_MODES = [
+  { value: 'ON_SITE', label: 'On-Site' },
+  { value: 'REMOTE', label: 'Remote' },
+  { value: 'HYBRID', label: 'Hybrid' },
+]
+
+function normalizeEnum<T extends string>(val: string | undefined, valid: readonly T[], fallback: T): T {
+  const upper = val?.toUpperCase().replace('-', '_') as T | undefined
+  return upper && valid.includes(upper) ? upper : fallback
+}
 
 export const EmployeeForm: React.FC<EmployeeFormProps> = ({
   initialValues,
@@ -60,15 +72,15 @@ export const EmployeeForm: React.FC<EmployeeFormProps> = ({
       department: initialValues?.department || '',
       designation: initialValues?.designation || '',
       age: initialValues?.age || 28,
-      status: (initialValues?.status as 'Permanent' | 'Contract' | 'Intern') || 'Contract',
-      workMode: initialValues?.workMode || 'Remote',
+      status: normalizeEnum(initialValues?.status, ['PERMANENT', 'CONTRACT', 'INTERN'] as const, 'PERMANENT'),
+      workMode: normalizeEnum(initialValues?.workMode, ['ON_SITE', 'REMOTE', 'HYBRID'] as const, 'ON_SITE'),
     },
   })
 
   const handleFormSubmit = (data: EmployeeFormValues) => {
     onSubmit({
       ...data,
-      disciplineScore: initialValues?.disciplineScore ?? 88,
+      disciplineScore: initialValues?.disciplineScore ?? 90,
     })
   }
 
@@ -85,9 +97,9 @@ export const EmployeeForm: React.FC<EmployeeFormProps> = ({
 
       <div>
         <Input
-          label="Email Address"
+          label="Email Address *"
           type="email"
-          placeholder="e.g. alex@company.com"
+          placeholder="e.g. alex@trm.com"
           error={errors.email?.message}
           {...register('email')}
         />
@@ -106,30 +118,39 @@ export const EmployeeForm: React.FC<EmployeeFormProps> = ({
         <div>
           <Input
             label="Designation"
-            placeholder="e.g. Frontend Dev"
+            placeholder="e.g. Frontend Engineer"
             error={errors.designation?.message}
             {...register('designation')}
           />
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div>
           <Input
             label="Age *"
             type="number"
             placeholder="28"
             error={errors.age?.message}
-            {...register('age')}
+            {...register('age', { valueAsNumber: true })}
           />
         </div>
 
         <div>
           <Select
-            label="Employment Status *"
+            label="Status *"
             options={STATUSES}
             error={errors.status?.message}
             {...register('status')}
+          />
+        </div>
+
+        <div>
+          <Select
+            label="Work Mode *"
+            options={WORK_MODES}
+            error={errors.workMode?.message}
+            {...register('workMode')}
           />
         </div>
       </div>

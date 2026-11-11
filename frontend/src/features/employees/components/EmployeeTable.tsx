@@ -1,5 +1,5 @@
 import React from 'react'
-import { Trash2, AlertCircle } from 'lucide-react'
+import { Trash2, Pencil, AlertCircle } from 'lucide-react'
 import type { Employee } from '../types'
 import { Avatar } from '@/components/ui/Avatar'
 import { Badge } from '@/components/ui/Badge'
@@ -17,6 +17,7 @@ export const EmployeeTable: React.FC<EmployeeTableProps> = ({
   employees = [],
   isLoading = false,
   onDelete,
+  onEdit,
 }) => {
   if (isLoading) {
     return (
@@ -57,7 +58,7 @@ export const EmployeeTable: React.FC<EmployeeTableProps> = ({
               className="hover:bg-gray-50 dark:hover:bg-slate-700/40 transition-colors"
             >
               <td className="px-6 py-4 flex items-center gap-3 font-medium text-gray-900 dark:text-white whitespace-nowrap">
-                <Avatar name={emp.name} avatarUrl={emp.avatarUrl} size="md" />
+                <Avatar name={emp.name} src={emp.avatarUrl} size="md" />
                 <div>
                   <div className="font-semibold">{emp.name}</div>
                   {emp.email && (
@@ -75,16 +76,28 @@ export const EmployeeTable: React.FC<EmployeeTableProps> = ({
                 <Badge status={emp.status} />
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-right">
-                {onDelete && (
-                  <button
-                    onClick={() => onDelete(emp.id)}
-                    className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
-                    title="Remove employee"
-                    aria-label={`Remove ${emp.name}`}
-                  >
-                    <Trash2 size={16} />
-                  </button>
-                )}
+                <div className="inline-flex items-center gap-1">
+                  {onEdit && (
+                    <button
+                      onClick={() => onEdit(emp)}
+                      className="p-1.5 text-gray-400 hover:text-primary hover:bg-indigo-50 dark:hover:bg-slate-700 rounded-lg transition-colors"
+                      title="Edit employee"
+                      aria-label={`Edit ${emp.name}`}
+                    >
+                      <Pencil size={16} />
+                    </button>
+                  )}
+                  {onDelete && (
+                    <button
+                      onClick={() => onDelete(emp.id)}
+                      className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
+                      title="Remove employee"
+                      aria-label={`Remove ${emp.name}`}
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  )}
+                </div>
               </td>
             </tr>
           ))}

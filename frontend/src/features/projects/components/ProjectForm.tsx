@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/Button'
 const projectSchema = z.object({
   title: z.string().min(2, 'Title is required'),
   deadline: z.string().min(1, 'Deadline is required'),
-  team: z.coerce.number().min(1, 'At least 1 team member is required'),
+  team: z.number({ invalid_type_error: 'Team size must be a number' }).min(1, 'At least 1 team member is required'),
   status: z.enum(['To Do', 'In Progress', 'Done']),
 })
 
@@ -67,7 +67,7 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({
             label="Team Size *"
             type="number"
             error={errors.team?.message}
-            {...register('team')}
+            {...register('team', { valueAsNumber: true })}
           />
         </div>
 

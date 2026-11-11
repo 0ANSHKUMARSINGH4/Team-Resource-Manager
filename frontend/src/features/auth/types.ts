@@ -1,5 +1,5 @@
 export interface User {
-  id: number
+  id?: number
   email: string
   fullName: string
   role: 'ADMIN' | 'MANAGER' | 'VIEWER' | string
@@ -19,4 +19,12 @@ export interface RegisterRequest {
 export interface AuthResponse {
   token: string
   user: User
+}
+
+export interface RawAuthResponse {
+  token: string
+  email?: string
+  fullName?: string
+  role?: string
+  user?: User
 }
