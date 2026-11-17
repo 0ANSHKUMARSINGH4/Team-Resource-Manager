@@ -1,8 +1,8 @@
 # Team Resource Manager — Full Project Analysis & Rebuild Architecture
 
-> **Document Version:** 1.9 — Smartphone-Style App Drawer & Sidebar Dock Customizer Live  
+> **Document Version:** 2.0 — Dedicated Drag-and-Drop App Drawer & Workspace Dock Page Live  
 > **Date:** 2026-11-18  
-> **Status:** 🟢 Live Cloud Deployments (Render + Vercel) + App Drawer & Custom Dock (`bb8b9dd`) → Phase 2 In Progress
+> **Status:** 🟢 Live Cloud Deployments (Render + Vercel) + Drag & Drop App Drawer Page (`647d48f`) → Phase 2 In Progress
 
 ---
 
@@ -807,7 +807,8 @@ flowchart LR
 | 2026-11-17 | 1.6 | Added Vercel SPA rewrites configuration (`37d57b4`) preventing 404s on browser reloads and direct URLs. |
 | 2026-11-18 | 1.7 | Built and deployed modern SaaS CRM marketing homepage inspired by Salesforce/Attio/Linear with bento grid, pricing tiers, comparison matrix, interactive dashboard preview, and full competitive CRM benchmark (`61e9de7`). |
 | 2026-11-18 | 1.8 | Added interactive 4-pillar Product Tour with contextual live mocks, dynamic Salesforce-grade ROI Value Calculator, and FAQ accordion (`ff53669`). Pushed to `origin/main`. |
-| 2026-11-18 | 1.9 | Implemented smartphone-style App Drawer & Sidebar Dock Customizer (`bb8b9dd`). Allows users to dump unneeded features to the drawer or pin modular apps (Core CRM, Operations, Finance, Productivity) with persistent `localStorage` dock state. |
+| 2026-11-18 | 1.9 | Implemented smartphone-style App Drawer & Sidebar Dock Customizer (`bb8b9dd`). |
+| 2026-11-18 | 2.0 | Converted App Drawer from modal into dedicated full-page view (`/apps`) with interactive HTML5 Drag-and-Drop (`647d48f`). Users drag apps between Sidebar Dock and Storage Drawer, reorder dock positions, and see real-time sidebar navigation updates. |
 
 *This document will be updated as we implement each phase.*
 
