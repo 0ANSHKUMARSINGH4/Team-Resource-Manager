@@ -3,9 +3,12 @@ import { LandingNavbar } from '../components/LandingNavbar'
 import { HeroSection } from '../components/HeroSection'
 import { LogoCloud } from '../components/LogoCloud'
 import { FeatureBentoGrid } from '../components/FeatureBentoGrid'
+import { InteractiveProductTour } from '../components/InteractiveProductTour'
+import { RoiCalculatorSection } from '../components/RoiCalculatorSection'
 import { CrmComparisonTable } from '../components/CrmComparisonTable'
 import { TestimonialsSection } from '../components/TestimonialsSection'
 import { PricingSection } from '../components/PricingSection'
+import { FaqSection } from '../components/FaqSection'
 import { CtaBanner } from '../components/CtaBanner'
 import { LandingFooter } from '../components/LandingFooter'
 
@@ -22,9 +25,12 @@ export const LandingPage: React.FC = () => {
         <HeroSection />
         <LogoCloud />
         <FeatureBentoGrid />
+        <InteractiveProductTour />
+        <RoiCalculatorSection />
         <CrmComparisonTable />
         <TestimonialsSection />
         <PricingSection />
+        <FaqSection />
         <CtaBanner />
       </main>
       <LandingFooter />

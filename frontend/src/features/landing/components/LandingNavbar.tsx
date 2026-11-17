@@ -30,18 +30,24 @@ export const LandingNavbar: React.FC = () => {
         </Link>
 
         {/* Navigation Links */}
-        <nav className="hidden md:flex items-center gap-8 text-sm font-semibold text-gray-600 dark:text-slate-300">
+        <nav className="hidden lg:flex items-center gap-7 text-sm font-semibold text-gray-600 dark:text-slate-300">
           <a href="#features" className="hover:text-primary dark:hover:text-indigo-400 transition-colors">
-            Platform Features
+            Features
+          </a>
+          <a href="#tour" className="hover:text-primary dark:hover:text-indigo-400 transition-colors">
+            Product Tour
+          </a>
+          <a href="#roi-calculator" className="hover:text-primary dark:hover:text-indigo-400 transition-colors">
+            ROI Calculator
           </a>
           <a href="#comparison" className="hover:text-primary dark:hover:text-indigo-400 transition-colors">
             Why TRM?
           </a>
-          <a href="#testimonials" className="hover:text-primary dark:hover:text-indigo-400 transition-colors">
-            Customer Stories
-          </a>
           <a href="#pricing" className="hover:text-primary dark:hover:text-indigo-400 transition-colors">
             Pricing
+          </a>
+          <a href="#faq" className="hover:text-primary dark:hover:text-indigo-400 transition-colors">
+            FAQ
           </a>
         </nav>
 
