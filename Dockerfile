@@ -17,3 +17,4 @@ EXPOSE 8080
 ENV PORT=8080
 
 ENTRYPOINT ["java", "-jar", "app.jar"]
+
