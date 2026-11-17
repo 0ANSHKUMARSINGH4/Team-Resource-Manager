@@ -170,9 +170,12 @@ interface AppDrawerState {
   toggleDrawer: () => void
   setSearchQuery: (query: string) => void
   setSelectedCategory: (cat: string) => void
-  pinFeature: (id: string) => void
+  pinFeature: (id: string, targetIndex?: number) => void
   unpinFeature: (id: string) => void
   togglePinFeature: (id: string) => void
+  reorderPinned: (sourceIndex: number, destinationIndex: number) => void
+  moveApp: (id: string, toPinned: boolean, targetIndex?: number) => void
+  setPinnedIds: (newOrder: string[]) => void
   resetToDefault: () => void
   pinAll: () => void
   clearDock: () => void
@@ -192,15 +195,20 @@ export const useAppDrawerStore = create<AppDrawerState>((set, get) => ({
   setSearchQuery: (searchQuery) => set({ searchQuery }),
   setSelectedCategory: (selectedCategory) => set({ selectedCategory }),
 
-  pinFeature: (id: string) => {
+  pinFeature: (id: string, targetIndex?: number) => {
     const { pinnedIds } = get()
     if (!pinnedIds.includes(id)) {
-      const updated = [...pinnedIds, id]
+      const updated = [...pinnedIds]
+      if (typeof targetIndex === 'number' && targetIndex >= 0 && targetIndex <= updated.length) {
+        updated.splice(targetIndex, 0, id)
+      } else {
+        updated.push(id)
+      }
       localStorage.setItem(STORAGE_KEY, JSON.stringify(updated))
       const feature = ALL_FEATURES.find((f) => f.id === id)
       set({
         pinnedIds: updated,
-        toastMessage: `Pinned "${feature?.name || id}" to sidebar dock`,
+        toastMessage: `Dropped "${feature?.name || id}" into sidebar dock`,
       })
     }
   },
@@ -212,7 +220,7 @@ export const useAppDrawerStore = create<AppDrawerState>((set, get) => ({
     const feature = ALL_FEATURES.find((f) => f.id === id)
     set({
       pinnedIds: updated,
-      toastMessage: `Dumped "${feature?.name || id}" to App Drawer`,
+      toastMessage: `Moved "${feature?.name || id}" to App Drawer storage`,
     })
   },
 
@@ -223,6 +231,60 @@ export const useAppDrawerStore = create<AppDrawerState>((set, get) => ({
     } else {
       pinFeature(id)
     }
+  },
+
+  reorderPinned: (sourceIndex: number, destinationIndex: number) => {
+    const { pinnedIds } = get()
+    if (
+      sourceIndex < 0 ||
+      sourceIndex >= pinnedIds.length ||
+      destinationIndex < 0 ||
+      destinationIndex >= pinnedIds.length
+    ) {
+      return
+    }
+    const updated = [...pinnedIds]
+    const [moved] = updated.splice(sourceIndex, 1)
+    updated.splice(destinationIndex, 0, moved)
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(updated))
+    set({
+      pinnedIds: updated,
+      toastMessage: 'Reordered sidebar dock items',
+    })
+  },
+
+  moveApp: (id: string, toPinned: boolean, targetIndex?: number) => {
+    const { pinnedIds } = get()
+    const withoutItem = pinnedIds.filter((item) => item !== id)
+    let updated: string[]
+
+    if (toPinned) {
+      if (typeof targetIndex === 'number' && targetIndex >= 0 && targetIndex <= withoutItem.length) {
+        withoutItem.splice(targetIndex, 0, id)
+        updated = withoutItem
+      } else {
+        updated = [...withoutItem, id]
+      }
+      const feature = ALL_FEATURES.find((f) => f.id === id)
+      set({
+        pinnedIds: updated,
+        toastMessage: `Pinned "${feature?.name || id}" to sidebar dock`,
+      })
+    } else {
+      updated = withoutItem
+      const feature = ALL_FEATURES.find((f) => f.id === id)
+      set({
+        pinnedIds: updated,
+        toastMessage: `Stored "${feature?.name || id}" in App Drawer`,
+      })
+    }
+
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(updated))
+  },
+
+  setPinnedIds: (newOrder: string[]) => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(newOrder))
+    set({ pinnedIds: newOrder })
   },
 
   resetToDefault: () => {

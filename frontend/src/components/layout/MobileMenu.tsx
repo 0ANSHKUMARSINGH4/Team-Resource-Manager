@@ -1,5 +1,5 @@
 import React from 'react'
-import { NavLink } from 'react-router-dom'
+import { NavLink, useNavigate } from 'react-router-dom'
 import {
   Settings,
   User,
@@ -17,8 +17,9 @@ const bottomNavItems = [
 ]
 
 export const MobileMenu: React.FC = () => {
+  const navigate = useNavigate()
   const { isMobileMenuOpen, setMobileMenuOpen } = useUIStore()
-  const { pinnedIds, openDrawer } = useAppDrawerStore()
+  const { pinnedIds } = useAppDrawerStore()
 
   if (!isMobileMenuOpen) return null
 
@@ -28,7 +29,7 @@ export const MobileMenu: React.FC = () => {
 
   const handleOpenAppDrawer = () => {
     setMobileMenuOpen(false)
-    openDrawer()
+    navigate('/apps')
   }
 
   return (

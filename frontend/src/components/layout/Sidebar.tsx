@@ -17,7 +17,7 @@ const bottomNavItems = [
 ]
 
 export const Sidebar: React.FC = () => {
-  const { pinnedIds, openDrawer, unpinFeature } = useAppDrawerStore()
+  const { pinnedIds, unpinFeature } = useAppDrawerStore()
 
   // Find all pinned features in the user's customized order
   const pinnedFeatures = pinnedIds
@@ -63,12 +63,12 @@ export const Sidebar: React.FC = () => {
             <p className="text-[11px] text-amber-700 dark:text-amber-400 mb-3">
               Open App Drawer to pin tools.
             </p>
-            <button
-              onClick={openDrawer}
-              className="px-3 py-1.5 rounded-xl bg-primary text-white text-xs font-bold shadow-xs hover:bg-indigo-700 transition-colors"
+            <NavLink
+              to="/apps"
+              className="inline-block px-3 py-1.5 rounded-xl bg-primary text-white text-xs font-bold shadow-xs hover:bg-indigo-700 transition-colors"
             >
-              Open Drawer
-            </button>
+              Open App Drawer
+            </NavLink>
           </div>
         ) : (
           pinnedFeatures.map((item) => {
@@ -115,11 +115,18 @@ export const Sidebar: React.FC = () => {
           })
         )}
 
-        {/* Smartphone-Style App Drawer Trigger Button */}
+        {/* Smartphone-Style App Drawer Navigation Link */}
         <div className="px-4 pt-3 pb-2">
-          <button
-            onClick={openDrawer}
-            className="w-full flex items-center justify-between p-3 rounded-2xl bg-gradient-to-r from-indigo-50/90 to-violet-50/90 dark:from-slate-700/60 dark:to-slate-700/40 hover:from-indigo-100 hover:to-violet-100 dark:hover:from-slate-700 dark:hover:to-slate-700 text-primary dark:text-indigo-300 border border-indigo-100/80 dark:border-slate-600/60 transition-all cursor-pointer shadow-xs group"
+          <NavLink
+            to="/apps"
+            className={({ isActive }) =>
+              cn(
+                'w-full flex items-center justify-between p-3 rounded-2xl transition-all cursor-pointer shadow-xs group',
+                isActive
+                  ? 'bg-gradient-to-r from-indigo-100 to-violet-100 dark:from-slate-700 dark:to-slate-700 text-primary dark:text-indigo-300 border border-primary/30'
+                  : 'bg-gradient-to-r from-indigo-50/90 to-violet-50/90 dark:from-slate-700/60 dark:to-slate-700/40 hover:from-indigo-100 hover:to-violet-100 dark:hover:from-slate-700 dark:hover:to-slate-700 text-primary dark:text-indigo-300 border border-indigo-100/80 dark:border-slate-600/60'
+              )
+            }
           >
             <div className="flex items-center gap-2.5">
               <div className="w-7 h-7 rounded-lg bg-primary text-white flex items-center justify-center shadow-xs group-hover:scale-110 transition-transform">
@@ -131,7 +138,7 @@ export const Sidebar: React.FC = () => {
                   <Sparkles size={11} className="text-amber-500" />
                 </div>
                 <div className="text-[10px] text-gray-500 dark:text-slate-400 font-medium">
-                  {unpinnedCount > 0 ? `${unpinnedCount} apps stashed` : 'All tools docked'}
+                  {unpinnedCount > 0 ? `${unpinnedCount} apps in drawer` : 'Customize Dock'}
                 </div>
               </div>
             </div>
@@ -139,7 +146,7 @@ export const Sidebar: React.FC = () => {
             <span className="p-1.5 rounded-lg bg-white dark:bg-slate-800 text-gray-400 group-hover:text-primary shadow-2xs transition-colors">
               <SlidersHorizontal size={13} />
             </span>
-          </button>
+          </NavLink>
         </div>
       </nav>
 

@@ -9,6 +9,7 @@ import { EmployeesPage } from '@/features/employees/pages/EmployeesPage'
 import { ProjectsPage } from '@/features/projects/pages/ProjectsPage'
 import { FinancePage } from '@/features/finance/pages/FinancePage'
 import { CalendarPage } from '@/features/calendar/pages/CalendarPage'
+import { AppDrawerPage } from '@/features/apps/pages/AppDrawerPage'
 import { SettingsPage } from '@/features/settings/pages/SettingsPage'
 import { ProfilePage } from '@/features/profile/pages/ProfilePage'
 import { useAuthStore } from '@/features/auth/store'
@@ -68,6 +69,10 @@ export const router = createBrowserRouter([
       {
         path: '/calendar',
         element: <CalendarPage />,
+      },
+      {
+        path: '/apps',
+        element: <AppDrawerPage />,
       },
       {
         path: '/settings',
