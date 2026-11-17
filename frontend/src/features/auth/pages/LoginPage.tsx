@@ -61,6 +61,16 @@ export const LoginPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-[#F8F9FD] dark:bg-slate-900 flex items-center justify-center p-4 transition-colors">
       <div className="w-full max-w-md">
+        {/* Back to Homepage */}
+        <div className="mb-4">
+          <Link
+            to="/"
+            className="inline-flex items-center gap-1.5 text-xs font-bold text-gray-500 hover:text-primary dark:text-slate-400 dark:hover:text-indigo-400 transition-colors"
+          >
+            ← Back to Homepage
+          </Link>
+        </div>
+
         {/* Brand header */}
         <div className="text-center mb-8">
           <div className="inline-flex w-12 h-12 bg-gradient-to-br from-primary to-indigo-700 rounded-xl items-center justify-center text-white font-bold shadow-lg shadow-indigo-500/20 text-sm mb-3">

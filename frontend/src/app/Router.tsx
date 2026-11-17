@@ -1,6 +1,7 @@
 import React from 'react'
 import { createBrowserRouter, Navigate } from 'react-router-dom'
 import { RootLayout } from '@/components/layout/RootLayout'
+import { LandingPage } from '@/features/landing/pages/LandingPage'
 import { LoginPage } from '@/features/auth/pages/LoginPage'
 import { RegisterPage } from '@/features/auth/pages/RegisterPage'
 import { DashboardPage } from '@/features/dashboard/pages/DashboardPage'
@@ -30,6 +31,10 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
 
 export const router = createBrowserRouter([
   {
+    path: '/',
+    element: <LandingPage />,
+  },
+  {
     path: '/login',
     element: <LoginPage />,
   },
@@ -38,7 +43,6 @@ export const router = createBrowserRouter([
     element: <RegisterPage />,
   },
   {
-    path: '/',
     element: (
       <ProtectedRoute>
         <RootLayout />
@@ -46,45 +50,37 @@ export const router = createBrowserRouter([
     ),
     children: [
       {
-        index: true,
-        element: <Navigate to="/dashboard" replace />,
-      },
-      {
-        path: 'dashboard',
+        path: '/dashboard',
         element: <DashboardPage />,
       },
       {
-        path: 'employees',
+        path: '/employees',
         element: <EmployeesPage />,
       },
       {
-        path: 'projects',
+        path: '/projects',
         element: <ProjectsPage />,
       },
       {
-        path: 'finance',
+        path: '/finance',
         element: <FinancePage />,
       },
       {
-        path: 'calendar',
+        path: '/calendar',
         element: <CalendarPage />,
       },
       {
-        path: 'settings',
+        path: '/settings',
         element: <SettingsPage />,
       },
       {
-        path: 'profile',
+        path: '/profile',
         element: <ProfilePage />,
-      },
-      {
-        path: '*',
-        element: <Navigate to="/dashboard" replace />,
       },
     ],
   },
   {
     path: '*',
-    element: <Navigate to="/dashboard" replace />,
+    element: <Navigate to="/" replace />,
   },
 ])
