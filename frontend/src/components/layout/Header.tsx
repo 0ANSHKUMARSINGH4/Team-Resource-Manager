@@ -8,8 +8,10 @@ import {
   ChevronDown,
   Settings,
   LogOut,
+  LayoutGrid,
 } from 'lucide-react'
 import { useUIStore } from '@/stores/uiStore'
+import { useAppDrawerStore } from '@/stores/appDrawerStore'
 import { useAuthStore } from '@/features/auth/store'
 import { useDarkMode } from '@/hooks/useDarkMode'
 
@@ -29,6 +31,7 @@ export const Header: React.FC = () => {
   const { toggleMobileMenu } = useUIStore()
   const { user, logout } = useAuthStore()
   const { isDark, toggleDarkMode } = useDarkMode()
+  const { openDrawer } = useAppDrawerStore()
 
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
@@ -67,7 +70,18 @@ export const Header: React.FC = () => {
         </h2>
       </div>
 
-      <div className="flex items-center space-x-2 md:space-x-4 relative">
+      <div className="flex items-center space-x-2 md:space-x-3 relative">
+        {/* App Drawer Launcher */}
+        <button
+          onClick={openDrawer}
+          className="p-2 rounded-xl bg-gray-100 dark:bg-slate-700/80 text-gray-600 dark:text-slate-300 hover:text-primary dark:hover:text-indigo-400 hover:bg-gray-200 dark:hover:bg-slate-600 transition-colors flex items-center gap-1.5 cursor-pointer text-xs font-bold"
+          title="Open App Drawer (Customize features)"
+          aria-label="Open App Drawer"
+        >
+          <LayoutGrid size={18} />
+          <span className="hidden sm:inline">Apps</span>
+        </button>
+
         {/* Dark Mode Toggle */}
         <button
           onClick={toggleDarkMode}

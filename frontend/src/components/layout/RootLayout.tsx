@@ -3,6 +3,7 @@ import { Outlet } from 'react-router-dom'
 import { Sidebar } from './Sidebar'
 import { Header } from './Header'
 import { MobileMenu } from './MobileMenu'
+import { AppDrawer } from './AppDrawer'
 
 export const RootLayout: React.FC = () => {
   return (
@@ -10,8 +11,11 @@ export const RootLayout: React.FC = () => {
       {/* Desktop Sidebar */}
       <Sidebar />
 
-      {/* Mobile Drawer */}
+      {/* Mobile Navigation */}
       <MobileMenu />
+
+      {/* Smartphone-Style App Drawer & Dock Customizer */}
+      <AppDrawer />
 
       {/* Main Content Area */}
       <main className="flex-1 overflow-y-auto relative flex flex-col">
