@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import {
   LayoutGrid,
@@ -9,7 +9,11 @@ import {
   ArrowRight,
   ArrowLeft,
   ArrowUpRight,
+  ChevronUp,
+  ChevronDown,
   CheckCircle2,
+  Download,
+  UploadCloud
 } from 'lucide-react'
 import { useAppDrawerStore, ALL_FEATURES, AppFeature } from '@/stores/appDrawerStore'
 
@@ -18,6 +22,9 @@ interface DragPayload {
   from: 'dock' | 'drawer'
   index?: number
 }
+
+// Module-level drag tracker ensures payload is never lost due to premature dragend or browser security restrictions
+let globalDragPayload: DragPayload | null = null
 
 export const AppDrawerPage: React.FC = () => {
   const {
@@ -36,12 +43,17 @@ export const AppDrawerPage: React.FC = () => {
     clearToast,
   } = useAppDrawerStore()
 
-  const [draggedItem, setDraggedItem] = useState<DragPayload | null>(null)
+  const [isDragging, setIsDragging] = useState(false)
+  const [activeDragId, setActiveDragId] = useState<string | null>(null)
+  const [dragSource, setDragSource] = useState<'dock' | 'drawer' | null>(null)
   const [isOverDock, setIsOverDock] = useState(false)
   const [isOverDrawer, setIsOverDrawer] = useState(false)
-  const [dropDockIndex, setDropDockIndex] = useState<number | null>(null)
+  const [hoveredDockIndex, setHoveredDockIndex] = useState<number | null>(null)
 
-  // Auto-dismiss toast after 3s
+  // Drag end cleanup timer
+  const cleanupTimerRef = useRef<NodeJS.Timeout | null>(null)
+
+  // Auto-dismiss toast
   useEffect(() => {
     if (toastMessage) {
       const timer = setTimeout(() => {
@@ -70,90 +82,157 @@ export const AppDrawerPage: React.FC = () => {
     return isUnpinned && matchesCategory && matchesSearch
   })
 
-  // Drag handlers
+  // ================= DRAG & DROP HANDLERS =================
+
   const handleDragStart = (
-    e: React.DragEvent,
+    e: React.DragEvent<HTMLDivElement>,
     id: string,
     from: 'dock' | 'drawer',
     index?: number
   ) => {
     const payload: DragPayload = { id, from, index }
-    setDraggedItem(payload)
-    e.dataTransfer.setData('application/json', JSON.stringify(payload))
-    e.dataTransfer.effectAllowed = 'move'
-  }
+    globalDragPayload = payload
+    setActiveDragId(id)
+    setDragSource(from)
+    setIsDragging(true)
 
-  const handleDragEnd = () => {
-    setDraggedItem(null)
-    setIsOverDock(false)
-    setIsOverDrawer(false)
-    setDropDockIndex(null)
-  }
-
-  const handleDockDragOver = (e: React.DragEvent, index?: number) => {
-    e.preventDefault()
-    e.dataTransfer.dropEffect = 'move'
-    setIsOverDock(true)
-    setIsOverDrawer(false)
-    if (typeof index === 'number') {
-      setDropDockIndex(index)
+    // Standard cross-browser text dataTransfer
+    try {
+      e.dataTransfer.setData('text/plain', JSON.stringify(payload))
+      e.dataTransfer.effectAllowed = 'move'
+    } catch (err) {
+      console.warn('dataTransfer set error', err)
     }
   }
 
-  const handleDrawerDragOver = (e: React.DragEvent) => {
+  const handleDragEnd = () => {
+    // Keep globalDragPayload alive for 150ms in case onDrop fires slightly after dragend
+    if (cleanupTimerRef.current) clearTimeout(cleanupTimerRef.current)
+    cleanupTimerRef.current = setTimeout(() => {
+      globalDragPayload = null
+      setActiveDragId(null)
+      setDragSource(null)
+      setIsDragging(false)
+      setIsOverDock(false)
+      setIsOverDrawer(false)
+      setHoveredDockIndex(null)
+    }, 150)
+  }
+
+  // --- DOCK DROP ZONE HANDLERS ---
+  const handleDockDragOver = (e: React.DragEvent, index?: number) => {
     e.preventDefault()
+    e.stopPropagation()
     e.dataTransfer.dropEffect = 'move'
-    setIsOverDrawer(true)
-    setIsOverDock(false)
+    if (!isOverDock) setIsOverDock(true)
+    if (isOverDrawer) setIsOverDrawer(false)
+    if (typeof index === 'number') {
+      setHoveredDockIndex(index)
+    }
+  }
+
+  const handleDockDragEnter = (e: React.DragEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setIsOverDock(true)
+    setIsOverDrawer(false)
+  }
+
+  const handleDockDragLeave = (e: React.DragEvent) => {
+    e.preventDefault()
+    // Only clear if leaving the dock zone completely
+    const related = e.relatedTarget as Node | null
+    if (!e.currentTarget.contains(related)) {
+      setIsOverDock(false)
+      setHoveredDockIndex(null)
+    }
   }
 
   const handleDockDrop = (e: React.DragEvent, targetIndex?: number) => {
     e.preventDefault()
+    e.stopPropagation()
     setIsOverDock(false)
-    setDropDockIndex(null)
+    setHoveredDockIndex(null)
 
-    try {
-      const dataStr = e.dataTransfer.getData('application/json')
-      const payload: DragPayload = dataStr ? JSON.parse(dataStr) : draggedItem
-
-      if (!payload) return
-
-      if (payload.from === 'drawer') {
-        // Dragged from Drawer to Dock -> Pin it at targetIndex
-        pinFeature(payload.id, targetIndex)
-      } else if (payload.from === 'dock' && typeof payload.index === 'number') {
-        // Dragged from Dock to Dock -> Reorder
-        const destination = typeof targetIndex === 'number' ? targetIndex : pinnedIds.length - 1
-        if (payload.index !== destination) {
-          reorderPinned(payload.index, destination)
-        }
+    let payload: DragPayload | null = globalDragPayload
+    if (!payload) {
+      try {
+        const raw = e.dataTransfer.getData('text/plain')
+        if (raw) payload = JSON.parse(raw)
+      } catch (err) {
+        console.warn('Drop parse error', err)
       }
-    } catch (err) {
-      console.warn('Drop error', err)
-    } finally {
-      setDraggedItem(null)
+    }
+
+    if (!payload || !payload.id) return
+
+    if (payload.from === 'drawer') {
+      // From Drawer -> Dock
+      pinFeature(payload.id, targetIndex)
+    } else if (payload.from === 'dock' && typeof payload.index === 'number') {
+      // Reordering within Dock
+      const destination = typeof targetIndex === 'number' ? targetIndex : pinnedIds.length - 1
+      if (payload.index !== destination) {
+        reorderPinned(payload.index, destination)
+      }
+    }
+
+    globalDragPayload = null
+    setActiveDragId(null)
+    setDragSource(null)
+    setIsDragging(false)
+  }
+
+  // --- DRAWER DROP ZONE HANDLERS ---
+  const handleDrawerDragOver = (e: React.DragEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    e.dataTransfer.dropEffect = 'move'
+    if (!isOverDrawer) setIsOverDrawer(true)
+    if (isOverDock) setIsOverDock(false)
+  }
+
+  const handleDrawerDragEnter = (e: React.DragEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setIsOverDrawer(true)
+    setIsOverDock(false)
+  }
+
+  const handleDrawerDragLeave = (e: React.DragEvent) => {
+    e.preventDefault()
+    const related = e.relatedTarget as Node | null
+    if (!e.currentTarget.contains(related)) {
+      setIsOverDrawer(false)
     }
   }
 
   const handleDrawerDrop = (e: React.DragEvent) => {
     e.preventDefault()
+    e.stopPropagation()
     setIsOverDrawer(false)
 
-    try {
-      const dataStr = e.dataTransfer.getData('application/json')
-      const payload: DragPayload = dataStr ? JSON.parse(dataStr) : draggedItem
-
-      if (!payload) return
-
-      if (payload.from === 'dock') {
-        // Dragged from Dock to Drawer -> Unpin it
-        unpinFeature(payload.id)
+    let payload: DragPayload | null = globalDragPayload
+    if (!payload) {
+      try {
+        const raw = e.dataTransfer.getData('text/plain')
+        if (raw) payload = JSON.parse(raw)
+      } catch (err) {
+        console.warn('Drop parse error', err)
       }
-    } catch (err) {
-      console.warn('Drop error', err)
-    } finally {
-      setDraggedItem(null)
     }
+
+    if (!payload || !payload.id) return
+
+    if (payload.from === 'dock') {
+      // From Dock -> Drawer (unpin)
+      unpinFeature(payload.id)
+    }
+
+    globalDragPayload = null
+    setActiveDragId(null)
+    setDragSource(null)
+    setIsDragging(false)
   }
 
   return (
@@ -171,7 +250,7 @@ export const AppDrawerPage: React.FC = () => {
               </h1>
               <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-extrabold bg-indigo-50 dark:bg-indigo-950/70 text-primary dark:text-indigo-400 border border-indigo-100 dark:border-indigo-800">
                 <Sparkles size={12} className="text-amber-500" />
-                <span>Interactive Drag & Drop</span>
+                <span>Interactive Drag &amp; Drop</span>
               </span>
             </div>
             <p className="text-sm text-gray-600 dark:text-slate-300 mt-1 max-w-2xl leading-relaxed">
@@ -209,10 +288,12 @@ export const AppDrawerPage: React.FC = () => {
         {/* Left Column: Active Sidebar Dock (5 cols) */}
         <div
           onDragOver={(e) => handleDockDragOver(e)}
+          onDragEnter={handleDockDragEnter}
+          onDragLeave={handleDockDragLeave}
           onDrop={(e) => handleDockDrop(e)}
-          className={`lg:col-span-5 rounded-3xl border transition-all p-6 bg-white dark:bg-slate-800/90 shadow-sm flex flex-col min-h-[580px] ${
-            isOverDock
-              ? 'border-primary ring-4 ring-primary/10 bg-indigo-50/20 dark:bg-indigo-950/20'
+          className={`lg:col-span-5 rounded-3xl border transition-all p-6 bg-white dark:bg-slate-800/90 shadow-sm flex flex-col min-h-[580px] relative ${
+            isOverDock && dragSource === 'drawer'
+              ? 'border-primary ring-4 ring-primary/20 bg-indigo-50/30 dark:bg-indigo-950/30 scale-[1.01]'
               : 'border-gray-200 dark:border-slate-700'
           }`}
         >
@@ -229,9 +310,21 @@ export const AppDrawerPage: React.FC = () => {
             </span>
           </div>
 
-          <p className="text-xs text-gray-500 dark:text-slate-400 mb-4">
-            Items in this list appear directly on your navigation dock. Drag to reorder or drag out to the drawer.
+          <p className="text-xs text-gray-500 dark:text-slate-400 mb-3">
+            Items in this list appear directly on your navigation dock. Drag to reorder or drag right to the drawer.
           </p>
+
+          {/* Active Drag Helper Drop Target Bar when dragging from Drawer */}
+          {isDragging && dragSource === 'drawer' && (
+            <div
+              onDragOver={(e) => handleDockDragOver(e, 0)}
+              onDrop={(e) => handleDockDrop(e, 0)}
+              className="mb-3 p-3 rounded-2xl border-2 border-dashed border-primary bg-indigo-50/60 dark:bg-indigo-950/50 text-center animate-pulse flex items-center justify-center gap-2 text-xs font-bold text-primary dark:text-indigo-400"
+            >
+              <Download size={16} />
+              <span>Drop here to pin to top of dock</span>
+            </div>
+          )}
 
           {/* Droppable List of Pinned Dock Items */}
           <div className="space-y-2.5 flex-1">
@@ -246,36 +339,34 @@ export const AppDrawerPage: React.FC = () => {
                   Your Dock is Empty
                 </p>
                 <p className="text-xs text-gray-400 mt-1 max-w-xs">
-                  Drag any app from the right drawer and drop it here to pin it.
+                  Drag any app from the right drawer and drop it anywhere here to pin it.
                 </p>
               </div>
             ) : (
               pinnedFeatures.map((app, index) => {
                 const Icon = app.icon
-                const isItemTargeted = dropDockIndex === index && isOverDock
+                const isThisBeingDragged = activeDragId === app.id
+                const isThisTargeted = hoveredDockIndex === index && isOverDock
+
                 return (
                   <div
                     key={app.id}
-                    draggable
+                    draggable={true}
                     onDragStart={(e) => handleDragStart(e, app.id, 'dock', index)}
                     onDragEnd={handleDragEnd}
-                    onDragOver={(e) => {
-                      e.stopPropagation()
-                      handleDockDragOver(e, index)
-                    }}
-                    onDrop={(e) => {
-                      e.stopPropagation()
-                      handleDockDrop(e, index)
-                    }}
+                    onDragOver={(e) => handleDockDragOver(e, index)}
+                    onDrop={(e) => handleDockDrop(e, index)}
                     className={`group relative flex items-center justify-between p-3.5 rounded-2xl bg-gray-50/80 dark:bg-slate-800 border transition-all cursor-grab active:cursor-grabbing hover:shadow-md select-none ${
-                      isItemTargeted
-                        ? 'border-primary ring-2 ring-primary/20 scale-[1.02]'
+                      isThisBeingDragged
+                        ? 'opacity-40 border-dashed border-primary scale-95'
+                        : isThisTargeted
+                        ? 'border-primary ring-2 ring-primary/30 scale-[1.02] bg-indigo-50/40 dark:bg-indigo-950/40'
                         : 'border-gray-200/80 dark:border-slate-700/80 hover:border-primary/50'
                     }`}
                   >
                     {/* Left: Drag Handle + Number + Icon + Title */}
                     <div className="flex items-center gap-3 min-w-0 flex-1">
-                      <div className="text-gray-300 dark:text-slate-600 group-hover:text-gray-600 dark:group-hover:text-slate-300 transition-colors">
+                      <div className="text-gray-300 dark:text-slate-600 group-hover:text-primary transition-colors cursor-grab">
                         <GripVertical size={16} />
                       </div>
                       <span className="w-5 h-5 rounded-full bg-gray-200 dark:bg-slate-700 text-gray-600 dark:text-slate-300 text-[10px] font-bold flex items-center justify-center shrink-0">
@@ -296,10 +387,31 @@ export const AppDrawerPage: React.FC = () => {
                       </div>
                     </div>
 
-                    {/* Right: Quick Launch & Move to Drawer button */}
-                    <div className="flex items-center gap-2 shrink-0">
+                    {/* Right: Reorder arrows + Quick Launch & Move to Drawer button */}
+                    <div className="flex items-center gap-1.5 shrink-0" draggable={false}>
+                      {/* Reorder Arrows */}
+                      <div className="flex flex-col">
+                        <button
+                          disabled={index === 0}
+                          onClick={() => reorderPinned(index, index - 1)}
+                          className="p-1 text-gray-400 hover:text-gray-700 dark:hover:text-slate-200 disabled:opacity-20 cursor-pointer"
+                          title="Move Up"
+                        >
+                          <ChevronUp size={12} />
+                        </button>
+                        <button
+                          disabled={index === pinnedFeatures.length - 1}
+                          onClick={() => reorderPinned(index, index + 1)}
+                          className="p-1 text-gray-400 hover:text-gray-700 dark:hover:text-slate-200 disabled:opacity-20 cursor-pointer"
+                          title="Move Down"
+                        >
+                          <ChevronDown size={12} />
+                        </button>
+                      </div>
+
                       <Link
                         to={app.to}
+                        draggable={false}
                         title="Open this tool"
                         className="p-2 rounded-lg text-gray-400 hover:text-primary dark:hover:text-indigo-400 hover:bg-white dark:hover:bg-slate-700 transition-colors"
                       >
@@ -308,7 +420,8 @@ export const AppDrawerPage: React.FC = () => {
 
                       <button
                         onClick={() => unpinFeature(app.id)}
-                        title="Move to App Drawer"
+                        draggable={false}
+                        title="Move to App Drawer Storage"
                         className="px-2.5 py-1.5 rounded-xl text-xs font-bold text-rose-600 dark:text-rose-400 bg-white dark:bg-slate-700/80 hover:bg-rose-50 dark:hover:bg-rose-950/60 border border-gray-200 dark:border-slate-600 shadow-2xs transition-colors cursor-pointer flex items-center gap-1"
                       >
                         <span className="hidden sm:inline">Move</span>
@@ -321,9 +434,21 @@ export const AppDrawerPage: React.FC = () => {
             )}
           </div>
 
+          {/* Bottom Drop Zone when dragging */}
+          {isDragging && dragSource === 'drawer' && (
+            <div
+              onDragOver={(e) => handleDockDragOver(e, pinnedFeatures.length)}
+              onDrop={(e) => handleDockDrop(e, pinnedFeatures.length)}
+              className="mt-3 p-3 rounded-2xl border-2 border-dashed border-primary bg-indigo-50/60 dark:bg-indigo-950/50 text-center animate-pulse flex items-center justify-center gap-2 text-xs font-bold text-primary dark:text-indigo-400"
+            >
+              <Download size={16} />
+              <span>Drop here to pin to bottom of dock</span>
+            </div>
+          )}
+
           {/* Footer note */}
           <div className="mt-4 pt-4 border-t border-gray-100 dark:border-slate-700 text-[11px] text-gray-400 flex items-center justify-between">
-            <span>💡 Tip: Drag within dock to reorder</span>
+            <span>💡 Tip: Drag card into left dock or use arrows to reorder</span>
             <span>Auto-synced</span>
           </div>
         </div>
@@ -331,10 +456,12 @@ export const AppDrawerPage: React.FC = () => {
         {/* Right Column: App Drawer Storage (7 cols) */}
         <div
           onDragOver={(e) => handleDrawerDragOver(e)}
+          onDragEnter={handleDrawerDragEnter}
+          onDragLeave={handleDrawerDragLeave}
           onDrop={(e) => handleDrawerDrop(e)}
-          className={`lg:col-span-7 rounded-3xl border transition-all p-6 bg-white dark:bg-slate-800/90 shadow-sm flex flex-col min-h-[580px] ${
-            isOverDrawer
-              ? 'border-amber-400 ring-4 ring-amber-400/10 bg-amber-50/10 dark:bg-amber-950/10'
+          className={`lg:col-span-7 rounded-3xl border transition-all p-6 bg-white dark:bg-slate-800/90 shadow-sm flex flex-col min-h-[580px] relative ${
+            isOverDrawer && dragSource === 'dock'
+              ? 'border-amber-400 ring-4 ring-amber-400/20 bg-amber-50/20 dark:bg-amber-950/20 scale-[1.01]'
               : 'border-gray-200 dark:border-slate-700'
           }`}
         >
@@ -343,16 +470,28 @@ export const AppDrawerPage: React.FC = () => {
             <div className="flex items-center gap-2">
               <span className="w-2.5 h-2.5 rounded-full bg-primary" />
               <h2 className="text-sm font-extrabold uppercase tracking-wider text-gray-900 dark:text-white">
-                App Drawer & Feature Library ({unpinnedFeatures.length} available)
+                App Drawer &amp; Feature Library ({unpinnedFeatures.length} available)
               </h2>
             </div>
             <span className="text-xs font-semibold text-gray-400">
-              Drag back to dock to activate
+              Drag left to activate in dock
             </span>
           </div>
 
+          {/* Drop Target Banner when dragging from dock */}
+          {isDragging && dragSource === 'dock' && (
+            <div
+              onDragOver={handleDrawerDragOver}
+              onDrop={handleDrawerDrop}
+              className="mb-4 p-4 rounded-2xl border-2 border-dashed border-amber-500 bg-amber-50/70 dark:bg-amber-950/60 text-center animate-pulse flex items-center justify-center gap-2 text-xs font-bold text-amber-900 dark:text-amber-200"
+            >
+              <UploadCloud size={18} className="text-amber-600" />
+              <span>Drop card anywhere here to remove from sidebar and store in drawer</span>
+            </div>
+          )}
+
           {/* Search Bar & Category Filters */}
-          <div className="space-y-3 mb-6">
+          <div className="space-y-3 mb-6" draggable={false}>
             <div className="relative">
               <Search
                 size={16}
@@ -410,13 +549,19 @@ export const AppDrawerPage: React.FC = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                 {unpinnedFeatures.map((app) => {
                   const Icon = app.icon
+                  const isThisBeingDragged = activeDragId === app.id
+
                   return (
                     <div
                       key={app.id}
-                      draggable
+                      draggable={true}
                       onDragStart={(e) => handleDragStart(e, app.id, 'drawer')}
                       onDragEnd={handleDragEnd}
-                      className="group flex flex-col justify-between p-4 rounded-2xl bg-gray-50/60 dark:bg-slate-800/80 border border-gray-200/80 dark:border-slate-700/80 hover:border-primary/50 shadow-xs hover:shadow-md transition-all cursor-grab active:cursor-grabbing select-none"
+                      className={`group flex flex-col justify-between p-4 rounded-2xl bg-gray-50/60 dark:bg-slate-800/80 border transition-all cursor-grab active:cursor-grabbing select-none ${
+                        isThisBeingDragged
+                          ? 'opacity-40 border-dashed border-primary scale-95'
+                          : 'border-gray-200/80 dark:border-slate-700/80 hover:border-primary/50 shadow-xs hover:shadow-md'
+                      }`}
                     >
                       <div>
                         {/* Top row: Icon + Name + Drag Grip */}
@@ -444,7 +589,7 @@ export const AppDrawerPage: React.FC = () => {
                             </div>
                           </div>
 
-                          <div className="text-gray-300 dark:text-slate-600 group-hover:text-primary transition-colors">
+                          <div className="text-gray-300 dark:text-slate-600 group-hover:text-primary transition-colors cursor-grab">
                             <GripVertical size={16} />
                           </div>
                         </div>
@@ -455,9 +600,10 @@ export const AppDrawerPage: React.FC = () => {
                       </div>
 
                       {/* Action buttons */}
-                      <div className="flex items-center justify-between pt-3 border-t border-gray-200/60 dark:border-slate-700/60 text-xs">
+                      <div className="flex items-center justify-between pt-3 border-t border-gray-200/60 dark:border-slate-700/60 text-xs" draggable={false}>
                         <Link
                           to={app.to}
+                          draggable={false}
                           className="inline-flex items-center gap-1 font-bold text-primary dark:text-indigo-400 hover:text-indigo-600 dark:hover:text-indigo-300"
                         >
                           <span>Launch</span>
@@ -466,6 +612,7 @@ export const AppDrawerPage: React.FC = () => {
 
                         <button
                           onClick={() => pinFeature(app.id)}
+                          draggable={false}
                           className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-bold text-xs bg-indigo-50 dark:bg-indigo-950/60 text-primary dark:text-indigo-400 hover:bg-primary hover:text-white transition-colors cursor-pointer border border-indigo-100 dark:border-indigo-800"
                         >
                           <ArrowLeft size={13} />
