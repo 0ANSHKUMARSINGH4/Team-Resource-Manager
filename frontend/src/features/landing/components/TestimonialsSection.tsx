@@ -48,7 +48,7 @@ export const TestimonialsSection: React.FC = () => {
           {testimonials.map((t, idx) => (
             <div
               key={idx}
-              className="rounded-2xl p-8 bg-gray-50/80 dark:bg-slate-800/60 border border-gray-100 dark:border-slate-700/80 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between"
+              className="rounded-3xl p-8 bg-gray-50/80 dark:bg-slate-800/60 border border-gray-100 dark:border-slate-700/80 shadow-sm hover:-translate-y-1.5 hover:shadow-xl hover:border-indigo-200 dark:hover:border-slate-600 transition-all duration-300 flex flex-col justify-between"
             >
               <div>
                 <div className="flex text-amber-400 mb-4">

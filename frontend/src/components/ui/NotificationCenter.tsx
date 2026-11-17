@@ -56,12 +56,12 @@ export const NotificationCenter: React.FC = () => {
       {/* Bell Trigger */}
       <button
         onClick={toggle}
-        className="relative p-2 rounded-full bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-slate-300 hover:bg-gray-200 dark:hover:bg-slate-600 transition-colors"
+        className="relative p-2 rounded-full bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-slate-300 hover:bg-gray-200 dark:hover:bg-slate-600 transition-colors cursor-pointer"
         aria-label="Notifications"
       >
         <Bell size={20} />
         {unreadCount > 0 && (
-          <span className="absolute -top-0.5 -right-0.5 h-4.5 w-4.5 flex items-center justify-center rounded-full bg-red-500 text-white text-[10px] font-bold ring-2 ring-white dark:ring-slate-800 animate-in zoom-in">
+          <span className="absolute -top-1 -right-1 min-w-[20px] h-[20px] px-1 flex items-center justify-center rounded-full bg-rose-600 text-white text-[10px] font-black leading-none shadow-md ring-2 ring-white dark:ring-slate-800 animate-in zoom-in duration-150">
             {unreadCount > 9 ? '9+' : unreadCount}
           </span>
         )}

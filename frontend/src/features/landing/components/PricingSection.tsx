@@ -100,10 +100,10 @@ export const PricingSection: React.FC = () => {
           {plans.map((p, idx) => (
             <div
               key={idx}
-              className={`rounded-2xl p-8 flex flex-col justify-between transition-all ${
+              className={`rounded-3xl p-8 flex flex-col justify-between transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl ${
                 p.popular
-                  ? 'bg-white dark:bg-slate-800 border-2 border-primary shadow-2xl relative scale-105 z-10'
-                  : 'bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 shadow-sm hover:shadow-md'
+                  ? 'bg-white dark:bg-slate-800 border-2 border-primary shadow-2xl relative scale-105 z-10 hover:border-violet-500'
+                  : 'bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 shadow-sm hover:border-primary/50'
               }`}
             >
               {p.popular && (

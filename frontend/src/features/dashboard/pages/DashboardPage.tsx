@@ -71,7 +71,7 @@ export const DashboardPage: React.FC = () => {
     <div className="space-y-6 md:space-y-8">
       {/* Executive Welcome Banner */}
       <div className="bg-gradient-to-r from-indigo-600 via-indigo-700 to-violet-800 rounded-3xl p-6 sm:p-8 text-white shadow-xl relative overflow-hidden">
-        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div className="relative z-1 flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div>
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/15 backdrop-blur-xs text-xs font-bold text-indigo-100 mb-3 border border-white/20">
               <Sparkles size={13} className="text-amber-300" />

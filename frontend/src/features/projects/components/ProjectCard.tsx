@@ -13,7 +13,10 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, onDelete }) =
   const isDone = project.status === 'Done' || project.status === 'DONE'
 
   return (
-    <Card className="p-6 relative group hover:shadow-md transition-all flex flex-col justify-between">
+    <Card
+      hoverEffect
+      className="p-6 relative group hover:-translate-y-1.5 hover:shadow-xl hover:border-indigo-200 dark:hover:border-slate-600 transition-all duration-300 flex flex-col justify-between"
+    >
       {onDelete && (
         <button
           onClick={() => onDelete(project.id)}

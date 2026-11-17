@@ -9,6 +9,8 @@ import {
   Settings,
   LogOut,
   Search,
+  PanelLeftClose,
+  PanelLeftOpen,
 } from 'lucide-react'
 import { useUIStore } from '@/stores/uiStore'
 import { useAuthStore } from '@/features/auth/store'
@@ -29,7 +31,7 @@ const pageTitles: Record<string, string> = {
 export const Header: React.FC = () => {
   const location = useLocation()
   const navigate = useNavigate()
-  const { toggleMobileMenu } = useUIStore()
+  const { toggleMobileMenu, isSidebarOpen, toggleSidebar } = useUIStore()
   const { user, logout } = useAuthStore()
   const { isDark, toggleDarkMode } = useDarkMode()
 
@@ -55,16 +57,27 @@ export const Header: React.FC = () => {
   }
 
   return (
-    <header className="bg-white dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700 px-4 md:px-8 py-4 flex justify-between items-center sticky top-0 z-10 transition-colors">
+    <header className="bg-white/95 dark:bg-slate-800/95 backdrop-blur-md border-b border-gray-200 dark:border-slate-700 px-4 md:px-8 py-3.5 flex justify-between items-center sticky top-0 z-40 transition-colors shadow-2xs">
       <div className="flex items-center gap-3">
         {/* Mobile Menu Toggle Button */}
         <button
           onClick={toggleMobileMenu}
-          className="md:hidden p-2 text-gray-500 hover:bg-gray-100 dark:text-slate-300 dark:hover:bg-slate-700 rounded-lg"
+          className="md:hidden p-2 text-gray-500 hover:bg-gray-100 dark:text-slate-300 dark:hover:bg-slate-700 rounded-lg cursor-pointer"
           aria-label="Open navigation menu"
         >
           <Menu size={24} />
         </button>
+
+        {/* Desktop Sidebar Toggle Button */}
+        <button
+          onClick={toggleSidebar}
+          className="hidden md:flex p-1.5 rounded-lg text-gray-500 hover:text-gray-900 dark:text-slate-400 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors cursor-pointer"
+          title={isSidebarOpen ? 'Collapse sidebar' : 'Expand sidebar'}
+          aria-label={isSidebarOpen ? 'Collapse sidebar' : 'Expand sidebar'}
+        >
+          {isSidebarOpen ? <PanelLeftClose size={20} /> : <PanelLeftOpen size={20} />}
+        </button>
+
         <h2 className="text-xl md:text-2xl font-bold text-gray-800 dark:text-white truncate">
           {currentTitle}
         </h2>
