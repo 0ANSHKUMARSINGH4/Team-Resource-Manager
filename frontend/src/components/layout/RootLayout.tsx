@@ -3,6 +3,7 @@ import { Outlet } from 'react-router-dom'
 import { Sidebar } from './Sidebar'
 import { Header } from './Header'
 import { MobileMenu } from './MobileMenu'
+import { Breadcrumbs, CommandPalette } from '@/components/ui'
 
 export const RootLayout: React.FC = () => {
   return (
@@ -16,11 +17,15 @@ export const RootLayout: React.FC = () => {
       {/* Main Content Area */}
       <main className="flex-1 overflow-y-auto relative flex flex-col">
         <Header />
+        <Breadcrumbs />
 
         <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-6 md:space-y-8 w-full flex-1">
           <Outlet />
         </div>
       </main>
+
+      {/* Global Command Palette (⌘K / Ctrl+K) */}
+      <CommandPalette />
     </div>
   )
 }

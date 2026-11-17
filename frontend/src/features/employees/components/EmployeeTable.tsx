@@ -3,7 +3,7 @@ import { Trash2, Pencil, AlertCircle } from 'lucide-react'
 import type { Employee } from '../types'
 import { Avatar } from '@/components/ui/Avatar'
 import { Badge } from '@/components/ui/Badge'
-import { Spinner } from '@/components/ui/Spinner'
+import { TableSkeleton } from '@/components/ui/Skeleton'
 import { EmptyState } from '@/components/ui/EmptyState'
 
 interface EmployeeTableProps {
@@ -11,6 +11,7 @@ interface EmployeeTableProps {
   isLoading?: boolean
   onDelete?: (id: number) => void
   onEdit?: (employee: Employee) => void
+  onSelect?: (employee: Employee) => void
 }
 
 export const EmployeeTable: React.FC<EmployeeTableProps> = ({
@@ -18,13 +19,10 @@ export const EmployeeTable: React.FC<EmployeeTableProps> = ({
   isLoading = false,
   onDelete,
   onEdit,
+  onSelect,
 }) => {
   if (isLoading) {
-    return (
-      <div className="flex justify-center items-center py-16">
-        <Spinner size="lg" />
-      </div>
-    )
+    return <TableSkeleton rows={6} />
   }
 
   if (employees.length === 0) {
@@ -55,12 +53,15 @@ export const EmployeeTable: React.FC<EmployeeTableProps> = ({
           {employees.map((emp) => (
             <tr
               key={emp.id}
-              className="hover:bg-gray-50 dark:hover:bg-slate-700/40 transition-colors"
+              onClick={() => onSelect?.(emp)}
+              className="hover:bg-indigo-50/40 dark:hover:bg-slate-700/40 transition-colors cursor-pointer group"
             >
               <td className="px-6 py-4 flex items-center gap-3 font-medium text-gray-900 dark:text-white whitespace-nowrap">
                 <Avatar name={emp.name} src={emp.avatarUrl} size="md" />
                 <div>
-                  <div className="font-semibold">{emp.name}</div>
+                  <div className="font-semibold group-hover:text-primary dark:group-hover:text-indigo-400 transition-colors">
+                    {emp.name}
+                  </div>
                   {emp.email && (
                     <div className="text-xs text-gray-400 dark:text-slate-400 font-normal">
                       {emp.email}
@@ -75,12 +76,12 @@ export const EmployeeTable: React.FC<EmployeeTableProps> = ({
               <td className="px-6 py-4 whitespace-nowrap">
                 <Badge status={emp.status} />
               </td>
-              <td className="px-6 py-4 whitespace-nowrap text-right">
+              <td className="px-6 py-4 whitespace-nowrap text-right" onClick={(e) => e.stopPropagation()}>
                 <div className="inline-flex items-center gap-1">
                   {onEdit && (
                     <button
                       onClick={() => onEdit(emp)}
-                      className="p-1.5 text-gray-400 hover:text-primary hover:bg-indigo-50 dark:hover:bg-slate-700 rounded-lg transition-colors"
+                      className="p-1.5 text-gray-400 hover:text-primary hover:bg-indigo-50 dark:hover:bg-slate-700 rounded-lg transition-colors cursor-pointer"
                       title="Edit employee"
                       aria-label={`Edit ${emp.name}`}
                     >
@@ -90,7 +91,7 @@ export const EmployeeTable: React.FC<EmployeeTableProps> = ({
                   {onDelete && (
                     <button
                       onClick={() => onDelete(emp.id)}
-                      className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
+                      className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors cursor-pointer"
                       title="Remove employee"
                       aria-label={`Remove ${emp.name}`}
                     >

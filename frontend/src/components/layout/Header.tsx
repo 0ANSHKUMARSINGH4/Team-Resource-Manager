@@ -8,11 +8,12 @@ import {
   ChevronDown,
   Settings,
   LogOut,
+  Search,
 } from 'lucide-react'
 import { useUIStore } from '@/stores/uiStore'
 import { useAuthStore } from '@/features/auth/store'
 import { useDarkMode } from '@/hooks/useDarkMode'
-import { AppDrawerLogo } from '@/components/ui'
+import { AppDrawerLogo, NotificationCenter } from '@/components/ui'
 
 const pageTitles: Record<string, string> = {
   '/dashboard': 'Dashboard',
@@ -70,6 +71,22 @@ export const Header: React.FC = () => {
       </div>
 
       <div className="flex items-center space-x-2 md:space-x-3 relative">
+        {/* Quick Search / Command Palette Trigger */}
+        <button
+          onClick={() => {
+            window.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', metaKey: true, bubbles: true }))
+          }}
+          className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-gray-100 dark:bg-slate-700/80 text-gray-500 dark:text-slate-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-200 dark:hover:bg-slate-600 transition-colors text-xs font-medium cursor-pointer border border-transparent hover:border-gray-200 dark:hover:border-slate-600"
+          title="Search or jump to... (Ctrl+K or ⌘K)"
+          aria-label="Open Command Palette"
+        >
+          <Search size={14} />
+          <span>Search...</span>
+          <kbd className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-white dark:bg-slate-800 text-[10px] font-mono font-bold text-gray-400 dark:text-slate-500 border border-gray-200 dark:border-slate-600 shadow-2xs">
+            ⌘K
+          </kbd>
+        </button>
+
         {/* App Drawer Launcher */}
         <button
           onClick={() => navigate('/apps')}
@@ -80,6 +97,9 @@ export const Header: React.FC = () => {
           <AppDrawerLogo size="xs" />
           <span className="hidden sm:inline">App Drawer</span>
         </button>
+
+        {/* Notification Center */}
+        <NotificationCenter />
 
         {/* Dark Mode Toggle */}
         <button
