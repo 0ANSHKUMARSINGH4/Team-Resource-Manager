@@ -4,11 +4,11 @@ import {
   Settings,
   User,
   X,
-  LayoutGrid,
   Sparkles,
 } from 'lucide-react'
 import { useUIStore } from '@/stores/uiStore'
 import { useAppDrawerStore, ALL_FEATURES } from '@/stores/appDrawerStore'
+import { AppDrawerLogo } from '@/components/ui'
 import { cn } from '@/lib/cn'
 
 const bottomNavItems = [
@@ -95,8 +95,8 @@ export const MobileMenu: React.FC = () => {
               onClick={handleOpenAppDrawer}
               className="w-full flex items-center justify-between p-2.5 rounded-xl bg-indigo-50 dark:bg-slate-700/60 text-primary dark:text-indigo-300 border border-indigo-100 dark:border-slate-600 text-xs font-bold"
             >
-              <div className="flex items-center gap-2">
-                <LayoutGrid size={16} />
+              <div className="flex items-center gap-2.5">
+                <AppDrawerLogo size="xs" />
                 <span>Open App Drawer</span>
               </div>
               <Sparkles size={12} className="text-amber-500" />

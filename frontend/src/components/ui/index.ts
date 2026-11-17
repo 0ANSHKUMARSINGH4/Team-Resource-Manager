@@ -8,3 +8,4 @@ export * from './StatCard';
 export * from './Avatar';
 export * from './Spinner';
 export * from './EmptyState';
+export * from './AppDrawerLogo';

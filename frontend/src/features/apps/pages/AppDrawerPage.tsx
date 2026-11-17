@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import {
-  LayoutGrid,
   Search,
   GripVertical,
   RotateCcw,
@@ -16,6 +15,7 @@ import {
   UploadCloud
 } from 'lucide-react'
 import { useAppDrawerStore, ALL_FEATURES, AppFeature } from '@/stores/appDrawerStore'
+import { AppDrawerLogo } from '@/components/ui'
 
 interface DragPayload {
   id: string
@@ -240,9 +240,7 @@ export const AppDrawerPage: React.FC = () => {
       {/* Top Page Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white dark:bg-slate-800 p-6 md:p-8 rounded-3xl border border-gray-200 dark:border-slate-700 shadow-sm transition-colors">
         <div className="flex items-start gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-primary via-indigo-600 to-violet-600 flex items-center justify-center text-white shadow-lg shadow-indigo-500/25 shrink-0">
-            <LayoutGrid size={24} />
-          </div>
+          <AppDrawerLogo size="lg" />
           <div>
             <div className="flex items-center gap-2.5">
               <h1 className="text-2xl font-black text-gray-900 dark:text-white tracking-tight">
@@ -334,7 +332,7 @@ export const AppDrawerPage: React.FC = () => {
                 onDrop={(e) => handleDockDrop(e)}
                 className="h-64 flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-gray-300 dark:border-slate-700 p-6 text-center bg-gray-50/50 dark:bg-slate-800/40"
               >
-                <LayoutGrid size={32} className="text-gray-400 mb-2" />
+                <AppDrawerLogo size="md" className="mb-3" />
                 <p className="text-sm font-bold text-gray-700 dark:text-slate-300">
                   Your Dock is Empty
                 </p>

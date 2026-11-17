@@ -3,13 +3,13 @@ import { NavLink } from 'react-router-dom'
 import {
   Settings,
   User,
-  LayoutGrid,
   Sparkles,
   SlidersHorizontal,
   PinOff
 } from 'lucide-react'
 import { cn } from '@/lib/cn'
 import { useAppDrawerStore, ALL_FEATURES } from '@/stores/appDrawerStore'
+import { AppDrawerLogo } from '@/components/ui'
 
 const bottomNavItems = [
   { to: '/profile', label: 'Profile', icon: User },
@@ -128,10 +128,8 @@ export const Sidebar: React.FC = () => {
               )
             }
           >
-            <div className="flex items-center gap-2.5">
-              <div className="w-7 h-7 rounded-lg bg-primary text-white flex items-center justify-center shadow-xs group-hover:scale-110 transition-transform">
-                <LayoutGrid size={15} />
-              </div>
+            <div className="flex items-center gap-3">
+              <AppDrawerLogo size="sm" />
               <div className="text-left">
                 <div className="text-xs font-black tracking-tight text-gray-900 dark:text-white flex items-center gap-1">
                   <span>App Drawer</span>
