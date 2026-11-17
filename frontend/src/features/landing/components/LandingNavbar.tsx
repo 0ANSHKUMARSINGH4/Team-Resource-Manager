@@ -34,6 +34,9 @@ export const LandingNavbar: React.FC = () => {
           <a href="#features" className="hover:text-primary dark:hover:text-indigo-400 transition-colors">
             Features
           </a>
+          <a href="#app-drawer" className="hover:text-primary dark:hover:text-indigo-400 transition-colors">
+            App Drawer
+          </a>
           <a href="#tour" className="hover:text-primary dark:hover:text-indigo-400 transition-colors">
             Product Tour
           </a>

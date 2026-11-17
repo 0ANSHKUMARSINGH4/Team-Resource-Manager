@@ -10,6 +10,24 @@ export const CrmComparisonTable: React.FC = () => {
       hubspot: 'Not supported (Sales-only)',
     },
     {
+      feature: 'Smartphone-Style App Drawer & Dock',
+      trm: 'Native Drag & Drop',
+      salesforce: 'Rigid tabs only',
+      hubspot: 'Fixed nav bar only',
+    },
+    {
+      feature: 'Global Command Palette (⌘K / Ctrl+K)',
+      trm: 'Sub-8ms Fuzzy Engine',
+      salesforce: 'No / Heavy global search',
+      hubspot: 'Limited search shortcut',
+    },
+    {
+      feature: '360° Slide-Over Record Drawer & Audit',
+      trm: true,
+      salesforce: 'Heavy page reload required',
+      hubspot: 'Standard side panel only',
+    },
+    {
       feature: 'Built-in Kanban Delivery & Sprints',
       trm: true,
       salesforce: 'Expensive third-party app',

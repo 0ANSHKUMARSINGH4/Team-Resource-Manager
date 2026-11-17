@@ -3,6 +3,7 @@ import { LandingNavbar } from '../components/LandingNavbar'
 import { HeroSection } from '../components/HeroSection'
 import { LogoCloud } from '../components/LogoCloud'
 import { FeatureBentoGrid } from '../components/FeatureBentoGrid'
+import { AppDrawerShowcase } from '../components/AppDrawerShowcase'
 import { InteractiveProductTour } from '../components/InteractiveProductTour'
 import { RoiCalculatorSection } from '../components/RoiCalculatorSection'
 import { CrmComparisonTable } from '../components/CrmComparisonTable'
@@ -25,6 +26,7 @@ export const LandingPage: React.FC = () => {
         <HeroSection />
         <LogoCloud />
         <FeatureBentoGrid />
+        <AppDrawerShowcase />
         <InteractiveProductTour />
         <RoiCalculatorSection />
         <CrmComparisonTable />

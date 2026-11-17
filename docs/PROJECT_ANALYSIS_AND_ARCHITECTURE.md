@@ -1,8 +1,8 @@
 # Team Resource Manager — Full Project Analysis & Rebuild Architecture
 
-> **Document Version:** 2.3 — Competitive CRM UX Suite: ⌘K Command Palette, Slide-Over 360° Drawer, Notification Center, Skeleton Loaders & CSV Export  
+> **Document Version:** 2.4 — Interactive CRM Landing Suite: 4-Mode Hero Sandbox Console, Smartphone Dock Showcase & Tactile Product Tour  
 > **Date:** 2026-11-18  
-> **Status:** 🟢 Live Cloud Deployments (Render + Vercel) + Phase 1 Competitive UX Overhaul Complete → Phase 2 Data & Pipeline In Progress
+> **Status:** 🟢 Live Cloud Deployments (Render + Vercel) + Interactive Landing Suite (`98c0aea`+) → Phase 2 Data & Pipeline In Progress
 
 ---
 
@@ -812,6 +812,7 @@ flowchart LR
 | 2026-11-18 | 2.1 | Fixed drag-and-drop mechanism (`8b7f88e`): Resolved browser `application/json` dataTransfer stripping via `text/plain` + global memory buffer, added animated drop target zones, and added arrow reorder buttons. |
 | 2026-11-18 | 2.2 | Designed and integrated custom matching `AppDrawerLogo` (`3f79676`): 2x2 smartphone app matrix in a violet-indigo-pink gradient squircle with micro-dots matching TRM core modules and ambient pulse indicator. |
 | 2026-11-18 | 2.3 | **Competitive CRM UX Suite**: Delivered Phase 1 high-impact items from `CRM_COMPETITIVE_ANALYSIS.md`: Global `⌘K`/`Ctrl+K` Command Palette, Slide-Over 360° Employee Drawer with Overview/Audit Timeline/Private Notes tabs, Notification Center dropdown with badge counter, Skeleton Loaders (`TableSkeleton`, `DashboardSkeleton`, etc.), Breadcrumb Navigation, CSV Export, and enhanced Button variants. |
+| 2026-11-18 | 2.4 | **Interactive CRM Landing Page Suite**: Upgraded the pre-login marketing homepage inspired by Attio, Linear, and Salesforce: (1) Hero 4-Mode Interactive Sandbox Console (Executive KPI, Movable Kanban Cards, Searchable Talent Directory, Working ⌘K Prompt), (2) One-Click Demo Credentials copy pill (`admin@trm.com` / `admin123`), (3) Dedicated Smartphone App Drawer & Dock Customizer Showcase (`AppDrawerShowcase.tsx`), (4) Tactile Interactive Product Tour with live multi-column task shifting and real-time Revenue/Burn/Gross Margin sliders, (5) Competitive Showdown table updated with TRM's modern differentiator capabilities. |
 
 *This document will be updated as we implement each phase.*
 
