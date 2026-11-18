@@ -57,6 +57,14 @@ build/
 .vscode/
 
 # --------------------
+# VAADIN
+# --------------------
+node_modules/
+.vaadin/
+src/main/frontend/generated/
+frontend/generated/
+
+# --------------------
 # OS FILES
 # --------------------
 .DS_Store

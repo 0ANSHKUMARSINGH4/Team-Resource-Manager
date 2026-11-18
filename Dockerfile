@@ -1,17 +1,17 @@
 # Build stage
-FROM maven:3.9-eclipse-temurin-17 AS build
+FROM maven:3.9-eclipse-temurin-21 AS build
 WORKDIR /app
 
-COPY backend/pom.xml .
+COPY pom.xml .
 RUN mvn dependency:go-offline -B || true
 
-COPY backend/src ./src
+COPY src ./src
 RUN mvn clean package -DskipTests -B
 
 # Run stage
-FROM eclipse-temurin:17-jre-jammy
+FROM eclipse-temurin:21-jre-jammy
 WORKDIR /app
-COPY --from=build /app/target/manager-0.0.1-SNAPSHOT.jar app.jar
+COPY --from=build /app/target/manager-1.0.0.jar app.jar
 
 EXPOSE 8080
 ENV PORT=8080
