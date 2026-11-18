@@ -64,10 +64,10 @@ export const KanbanColumn: React.FC<KanbanColumnProps> = ({
   const projectIds = projects.map((p) => p.id)
 
   return (
-    <div className="flex flex-col flex-1 min-w-[300px] max-w-full rounded-2xl bg-slate-50/80 dark:bg-slate-900/50 border border-slate-200/70 dark:border-slate-800/80 shadow-xs">
-      {/* Column Header */}
+    <div className="flex flex-col flex-1 w-full min-w-[280px] rounded-2xl bg-slate-50/80 dark:bg-slate-900/50 border border-slate-200/70 dark:border-slate-800/80 shadow-xs h-full min-h-[580px]">
+      {/* Column Header: Uniform height across all 3 stage columns */}
       <div
-        className={`p-4 border-b border-slate-200/60 dark:border-slate-800/80 border-t-4 ${columnConfig.borderAccent} rounded-t-2xl flex items-center justify-between`}
+        className={`p-4 border-b border-slate-200/60 dark:border-slate-800/80 border-t-4 ${columnConfig.borderAccent} rounded-t-2xl flex items-center justify-between h-14 shrink-0`}
       >
         <div className="flex items-center gap-2.5">
           <Icon size={18} className={columnConfig.color} />
@@ -85,8 +85,9 @@ export const KanbanColumn: React.FC<KanbanColumnProps> = ({
           <button
             type="button"
             onClick={() => onAddNew(id)}
-            className="p-1 text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-slate-200/60 dark:hover:bg-slate-800 rounded-lg transition-colors"
+            className="p-1 text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-slate-200/60 dark:hover:bg-slate-800 rounded-lg transition-colors cursor-pointer"
             title={`Add task to ${title}`}
+            aria-label={`Add task to ${title}`}
           >
             <Plus size={16} />
           </button>
@@ -96,7 +97,7 @@ export const KanbanColumn: React.FC<KanbanColumnProps> = ({
       {/* Droppable Content Area */}
       <div
         ref={setNodeRef}
-        className={`flex-1 p-3 space-y-3 min-h-[450px] transition-all rounded-b-2xl ${
+        className={`flex-1 p-3 space-y-3 min-h-[500px] transition-all rounded-b-2xl ${
           isOver ? columnConfig.overBg : ''
         }`}
       >
@@ -115,7 +116,7 @@ export const KanbanColumn: React.FC<KanbanColumnProps> = ({
         </SortableContext>
 
         {projects.length === 0 && (
-          <div className="h-36 flex flex-col items-center justify-center border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-xl text-center p-4">
+          <div className="h-44 flex flex-col items-center justify-center border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-xl text-center p-4">
             <p className="text-xs text-slate-400 dark:text-slate-500 font-medium">
               No tasks in {title.toLowerCase()}
             </p>

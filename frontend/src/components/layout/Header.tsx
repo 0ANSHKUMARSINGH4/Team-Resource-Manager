@@ -8,14 +8,15 @@ import {
   ChevronDown,
   Settings,
   LogOut,
-  Search,
+  Command,
   PanelLeftClose,
   PanelLeftOpen,
 } from 'lucide-react'
+import { cn } from '@/lib/cn'
 import { useUIStore } from '@/stores/uiStore'
 import { useAuthStore } from '@/features/auth/store'
 import { useDarkMode } from '@/hooks/useDarkMode'
-import { AppDrawerLogo, NotificationCenter } from '@/components/ui'
+import { NotificationCenter } from '@/components/ui'
 
 const pageTitles: Record<string, string> = {
   '/dashboard': 'Dashboard',
@@ -36,6 +37,7 @@ export const Header: React.FC = () => {
   const { isDark, toggleDarkMode } = useDarkMode()
 
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
+  const [isQuickBarFocused, setIsQuickBarFocused] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
 
   const currentTitle = pageTitles[location.pathname] || 'Dashboard'
@@ -84,32 +86,44 @@ export const Header: React.FC = () => {
       </div>
 
       <div className="flex items-center space-x-2 md:space-x-3 relative">
-        {/* Quick Search / Command Palette Trigger */}
-        <button
-          onClick={() => {
-            window.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', metaKey: true, bubbles: true }))
-          }}
-          className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-gray-100 dark:bg-slate-700/80 text-gray-500 dark:text-slate-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-200 dark:hover:bg-slate-600 transition-colors text-xs font-medium cursor-pointer border border-transparent hover:border-gray-200 dark:hover:border-slate-600"
-          title="Search or jump to... (Ctrl+K or ⌘K)"
-          aria-label="Open Command Palette"
-        >
-          <Search size={14} />
-          <span>Search...</span>
-          <kbd className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-white dark:bg-slate-800 text-[10px] font-mono font-bold text-gray-400 dark:text-slate-500 border border-gray-200 dark:border-slate-600 shadow-2xs">
-            ⌘K
-          </kbd>
-        </button>
-
-        {/* App Drawer Launcher */}
-        <button
-          onClick={() => navigate('/apps')}
-          className="p-1.5 sm:px-2.5 sm:py-1.5 rounded-xl bg-gray-100 dark:bg-slate-700/80 text-gray-700 dark:text-slate-200 hover:text-primary dark:hover:text-indigo-400 hover:bg-gray-200 dark:hover:bg-slate-600 transition-colors flex items-center gap-2 cursor-pointer text-xs font-bold"
-          title="Customize Navigation Dock (Drag & Drop)"
-          aria-label="Open App Drawer Page"
-        >
-          <AppDrawerLogo size="xs" />
-          <span className="hidden sm:inline">App Drawer</span>
-        </button>
+        {/* Quick Bar: Expandable Navbar Command Center */}
+        <div className="relative flex items-center">
+          <div
+            onClick={() => {
+              window.dispatchEvent(
+                new KeyboardEvent('keydown', { key: 'k', metaKey: true, bubbles: true })
+              )
+            }}
+            className={cn(
+              'group flex items-center gap-2 px-3 py-1.5 rounded-xl bg-gray-100 dark:bg-slate-700/80 text-gray-500 dark:text-slate-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-200/90 dark:hover:bg-slate-600 transition-all duration-300 ease-in-out cursor-pointer border border-transparent hover:border-gray-300 dark:hover:border-slate-600 shadow-2xs',
+              isQuickBarFocused
+                ? 'w-60 sm:w-80 ring-2 ring-indigo-500/40 bg-white dark:bg-slate-700 shadow-md'
+                : 'w-36 sm:w-48'
+            )}
+            title="Quick Bar (⌘K): Jump anywhere, search records, or trigger actions"
+          >
+            <Command
+              size={14}
+              className="text-indigo-600 dark:text-indigo-400 shrink-0 group-hover:scale-110 transition-transform"
+            />
+            <input
+              type="text"
+              readOnly
+              onFocus={() => {
+                setIsQuickBarFocused(true)
+                window.dispatchEvent(
+                  new KeyboardEvent('keydown', { key: 'k', metaKey: true, bubbles: true })
+                )
+              }}
+              onBlur={() => setIsQuickBarFocused(false)}
+              placeholder="Quick Bar..."
+              className="bg-transparent text-xs text-gray-800 dark:text-slate-200 placeholder-gray-400 dark:placeholder-slate-400 focus:outline-none w-full cursor-pointer select-none font-medium"
+            />
+            <kbd className="hidden sm:inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-white dark:bg-slate-800 text-[10px] font-mono font-bold text-gray-400 dark:text-slate-500 border border-gray-200 dark:border-slate-600 shadow-2xs shrink-0">
+              ⌘K
+            </kbd>
+          </div>
+        </div>
 
         {/* Notification Center */}
         <NotificationCenter />

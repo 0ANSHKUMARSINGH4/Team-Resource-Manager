@@ -6,8 +6,6 @@ import {
   Sparkles,
   SlidersHorizontal,
   PinOff,
-  ChevronLeft,
-  ChevronRight,
 } from 'lucide-react'
 import { cn } from '@/lib/cn'
 import { useAppDrawerStore, ALL_FEATURES } from '@/stores/appDrawerStore'
@@ -21,7 +19,7 @@ const bottomNavItems = [
 
 export const Sidebar: React.FC = () => {
   const { pinnedIds, unpinFeature } = useAppDrawerStore()
-  const { isSidebarOpen, toggleSidebar } = useUIStore()
+  const { isSidebarOpen } = useUIStore()
 
   // Find all pinned features in the user's customized order
   const pinnedFeatures = pinnedIds
@@ -41,14 +39,13 @@ export const Sidebar: React.FC = () => {
       <div
         className={cn(
           'p-4 flex items-center mb-1 transition-all',
-          isSidebarOpen ? 'justify-between px-6' : 'justify-center'
+          isSidebarOpen ? 'justify-start px-6' : 'justify-center'
         )}
       >
         <div className="flex items-center space-x-3 overflow-hidden">
           <div
-            onClick={toggleSidebar}
-            className="w-10 h-10 bg-gradient-to-tr from-primary via-indigo-600 to-violet-600 rounded-xl flex items-center justify-center text-white font-black shadow-md text-xs shrink-0 cursor-pointer hover:scale-105 transition-transform"
-            title={isSidebarOpen ? 'Team Resource Manager' : 'Expand Sidebar'}
+            className="w-10 h-10 bg-gradient-to-tr from-primary via-indigo-600 to-violet-600 rounded-xl flex items-center justify-center text-white font-black shadow-md text-xs shrink-0 select-none"
+            title="Team Resource Manager"
           >
             TRM
           </div>
@@ -63,18 +60,6 @@ export const Sidebar: React.FC = () => {
             </div>
           )}
         </div>
-
-        {/* Collapse toggle button in expanded header */}
-        {isSidebarOpen && (
-          <button
-            onClick={toggleSidebar}
-            className="p-1.5 rounded-lg text-gray-400 hover:text-gray-700 dark:hover:text-slate-200 hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors cursor-pointer"
-            title="Collapse sidebar"
-            aria-label="Collapse sidebar"
-          >
-            <ChevronLeft size={18} />
-          </button>
-        )}
       </div>
 
       {/* Navigation Label */}
@@ -231,18 +216,6 @@ export const Sidebar: React.FC = () => {
             </NavLink>
           )
         })}
-
-        {/* Expand button when collapsed */}
-        {!isSidebarOpen && (
-          <button
-            onClick={toggleSidebar}
-            className="w-12 h-10 mx-auto flex items-center justify-center text-gray-400 hover:text-primary hover:bg-gray-100 dark:hover:bg-slate-700 rounded-xl transition-colors cursor-pointer"
-            title="Expand sidebar"
-            aria-label="Expand sidebar"
-          >
-            <ChevronRight size={18} />
-          </button>
-        )}
       </div>
     </aside>
   )

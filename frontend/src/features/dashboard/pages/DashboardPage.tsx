@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Plus, Users, UserCheck, Briefcase, Award, Sparkles, Command } from 'lucide-react'
+import { Plus, Users, UserCheck, Briefcase, Award, Sparkles } from 'lucide-react'
 import { toast } from 'sonner'
 import { useDashboardStats } from '../hooks'
 import { useEmployees, useCreateEmployee, useDeleteEmployee } from '@/features/employees/hooks'
@@ -85,16 +85,7 @@ export const DashboardPage: React.FC = () => {
             </p>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2.5">
-            <button
-              onClick={() => {
-                window.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', metaKey: true, bubbles: true }))
-              }}
-              className="px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 backdrop-blur-xs text-xs font-bold text-white transition-all flex items-center gap-2 cursor-pointer shadow-xs"
-            >
-              <Command size={14} /> Quick Bar
-              <span className="px-1.5 py-0.5 rounded bg-white/20 text-[10px] font-mono">⌘K</span>
-            </button>
+          <div className="flex items-center gap-2.5">
             <Button
               onClick={() => setIsModalOpen(true)}
               variant="secondary"
