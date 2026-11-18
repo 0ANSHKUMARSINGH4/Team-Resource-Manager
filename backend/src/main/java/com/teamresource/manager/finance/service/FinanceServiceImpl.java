@@ -55,14 +55,16 @@ public class FinanceServiceImpl implements FinanceService {
     public FinanceSummaryResponse getFinanceSummary() {
         BigDecimal totalIncome = transactionRepository.sumTotalIncome();
         BigDecimal totalExpenses = transactionRepository.sumTotalExpense();
-        BigDecimal netIncome = totalIncome.subtract(totalExpenses);
+        BigDecimal income = totalIncome != null ? totalIncome : BigDecimal.ZERO;
+        BigDecimal expenses = totalExpenses != null ? totalExpenses : BigDecimal.ZERO;
+        BigDecimal netIncome = income.subtract(expenses);
 
         BigDecimal annualBudget = new BigDecimal("128000.00");
 
         double profitMargin = 0.0;
-        if (totalIncome.compareTo(BigDecimal.ZERO) > 0) {
+        if (income.compareTo(BigDecimal.ZERO) > 0) {
             profitMargin = netIncome
-                    .divide(totalIncome, 4, RoundingMode.HALF_UP)
+                    .divide(income, 4, RoundingMode.HALF_UP)
                     .multiply(new BigDecimal("100"))
                     .doubleValue();
         }
@@ -83,8 +85,8 @@ public class FinanceServiceImpl implements FinanceService {
 
         return FinanceSummaryResponse.builder()
                 .totalBudget(annualBudget)
-                .totalExpenses(totalExpenses)
-                .totalIncome(totalIncome)
+                .totalExpenses(expenses)
+                .totalIncome(income)
                 .netIncome(netIncome)
                 .profitMargin(Math.round(profitMargin * 10.0) / 10.0)
                 .monthlyCashFlow(cashFlow)
