@@ -11,6 +11,7 @@ interface ProjectCardProps {
 
 export const ProjectCard: React.FC<ProjectCardProps> = ({ project, onDelete }) => {
   const isDone = project.status === 'Done' || project.status === 'DONE'
+  const teamSize = project.team ?? 3
 
   return (
     <Card
@@ -54,7 +55,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, onDelete }) =
       {/* Avatar Overlap Logic */}
       <div className="flex items-center justify-between border-t border-gray-100 dark:border-slate-700 pt-4">
         <div className="flex -space-x-2">
-          {[...Array(Math.min(project.team, 4))].map((_, i) => (
+          {[...Array(Math.min(teamSize, 4))].map((_, i) => (
             <div
               key={i}
               className="w-8 h-8 rounded-full bg-gray-200 dark:bg-slate-600 border-2 border-white dark:border-slate-800 flex items-center justify-center text-xs font-bold text-gray-600 dark:text-slate-300"
@@ -62,14 +63,14 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, onDelete }) =
               U{i + 1}
             </div>
           ))}
-          {project.team > 4 && (
+          {teamSize > 4 && (
             <div className="w-8 h-8 rounded-full bg-indigo-100 dark:bg-indigo-900 border-2 border-white dark:border-slate-800 flex items-center justify-center text-xs font-bold text-primary dark:text-indigo-300">
-              +{project.team - 4}
+              +{teamSize - 4}
             </div>
           )}
         </div>
         <span className="text-xs text-gray-400 dark:text-slate-500 font-medium">
-          {project.team} members
+          {teamSize} members
         </span>
       </div>
     </Card>

@@ -30,9 +30,13 @@ function resolveVariant(variant?: BadgeVariant, status?: string): BadgeVariant {
       return 'success';
     case 'contract':
     case 'in progress':
+    case 'in_progress':
     case 'pending':
     case 'warning':
       return 'warning';
+    case 'to do':
+    case 'todo':
+      return 'info';
     case 'intern':
       return 'default';
     case 'on-site':

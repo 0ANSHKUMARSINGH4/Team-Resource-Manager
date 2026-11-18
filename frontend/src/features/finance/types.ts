@@ -1,14 +1,38 @@
+export type TransactionType = 'INCOME' | 'EXPENSE' | 'income' | 'expense'
+
 export interface Transaction {
   id: number
-  desc: string
+  description?: string
+  desc?: string // Backward compatibility with legacy mock
   amount: number
-  date: string
-  type: 'income' | 'expense' | 'INCOME' | 'EXPENSE'
+  type: TransactionType
   category?: string
+  transactionDate?: string
+  date?: string // Backward compatibility with legacy mock
+  recordedBy?: number
+  createdAt?: string
+}
+
+export interface TransactionRequest {
+  description: string
+  amount: number
+  type: 'INCOME' | 'EXPENSE'
+  category?: string
+  transactionDate?: string
+}
+
+export interface CashFlowPoint {
+  month: string
+  income: number
+  expenses: number
+  net: number
 }
 
 export interface FinanceSummary {
-  budget: number
-  expenses: number
+  totalBudget: number
+  totalExpenses: number
+  totalIncome: number
   netIncome: number
+  profitMargin: number
+  monthlyCashFlow: CashFlowPoint[]
 }

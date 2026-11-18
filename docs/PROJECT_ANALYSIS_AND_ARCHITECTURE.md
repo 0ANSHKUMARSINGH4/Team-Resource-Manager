@@ -688,13 +688,13 @@ frontend/src/
 - [x] TypeScript conversion across the entire frontend
 
 ### Phase 2 — Core Features (Weeks 3–4)
-- [ ] Project management backend (full CRUD)
-- [ ] Kanban board with drag-and-drop (dnd-kit)
+- [x] Project management backend (full CRUD)
+- [x] Kanban board with drag-and-drop (dnd-kit)
 - [ ] Project-Employee assignment
-- [ ] Finance module backend (transactions CRUD)
-- [ ] Dynamic dashboard with real aggregated stats
-- [ ] Toast notifications (Sonner)
-- [ ] Form validation (React Hook Form + Zod)
+- [x] Finance module backend (transactions CRUD)
+- [x] Dynamic dashboard with real aggregated stats
+- [x] Toast notifications (Sonner)
+- [x] Form validation (React Hook Form + Zod)
 
 ### Phase 3 — Calendar & Analytics (Weeks 5–6)
 - [ ] Event/Calendar backend
@@ -813,6 +813,7 @@ flowchart LR
 | 2026-11-18 | 2.2 | Designed and integrated custom matching `AppDrawerLogo` (`3f79676`): 2x2 smartphone app matrix in a violet-indigo-pink gradient squircle with micro-dots matching TRM core modules and ambient pulse indicator. |
 | 2026-11-18 | 2.3 | **Competitive CRM UX Suite**: Delivered Phase 1 high-impact items from `CRM_COMPETITIVE_ANALYSIS.md`: Global `⌘K`/`Ctrl+K` Command Palette, Slide-Over 360° Employee Drawer with Overview/Audit Timeline/Private Notes tabs, Notification Center dropdown with badge counter, Skeleton Loaders (`TableSkeleton`, `DashboardSkeleton`, etc.), Breadcrumb Navigation, CSV Export, and enhanced Button variants. |
 | 2026-11-18 | 2.4 | **Interactive CRM Landing Page Suite**: Upgraded the pre-login marketing homepage inspired by Attio, Linear, and Salesforce: (1) Hero 4-Mode Interactive Sandbox Console (Executive KPI, Movable Kanban Cards, Searchable Talent Directory, Working ⌘K Prompt), (2) One-Click Demo Credentials copy pill (`admin@trm.com` / `admin123`), (3) Dedicated Smartphone App Drawer & Dock Customizer Showcase (`AppDrawerShowcase.tsx`), (4) Tactile Interactive Product Tour with live multi-column task shifting and real-time Revenue/Burn/Gross Margin sliders, (5) Competitive Showdown table updated with TRM's modern differentiator capabilities. |
+| 2026-11-18 | 2.5 | **Interactive Drag-and-Drop Kanban Board & Live Finance Ledger Suite**: (1) Fixed sticky header scroll-bleed z-index collision (`z-40` & `relative z-1`) and styled notification badge inside circular ring pill, (2) Built collapsible desktop sidebar (`w-64` ↔ `w-20`) with smooth animation and centered tooltip icons, (3) Added hovering elevation cards and micro-interactions across landing page and app cards, (4) Implemented `@dnd-kit` multi-column Drag-and-Drop Kanban Board (`/projects`) with optimistic UI status mutations and real-time sync, (5) Implemented end-to-end Finance API integration (`/finance`) with double-entry ledger backend, annual burn analytics, dynamic cash flow chart, CSV export, and transaction modal. |
 
 *This document will be updated as we implement each phase.*
 

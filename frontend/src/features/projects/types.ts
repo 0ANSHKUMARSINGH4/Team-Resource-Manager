@@ -1,20 +1,29 @@
-export type ProjectStatus = 'To Do' | 'In Progress' | 'Done' | 'TODO' | 'IN_PROGRESS' | 'REVIEW' | 'DONE'
+export type ProjectStatus = 'TODO' | 'IN_PROGRESS' | 'DONE' | 'To Do' | 'In Progress' | 'Done'
 
 export interface Project {
   id: number
   title: string
   description?: string
   status: ProjectStatus
-  deadline: string
-  team: number
+  deadline?: string
+  startDate?: string
   budget?: number
+  team?: number
+  createdBy?: number
+  createdAt?: string
+  updatedAt?: string
 }
 
 export interface ProjectRequest {
   title: string
   description?: string
   status?: string
-  deadline: string
-  team: number
+  startDate?: string
+  deadline?: string
+  team?: number
   budget?: number
+}
+
+export interface ProjectStatusUpdateRequest {
+  status: 'TODO' | 'IN_PROGRESS' | 'DONE'
 }
