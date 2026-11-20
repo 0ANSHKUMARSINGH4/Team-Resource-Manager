@@ -1,5 +1,14 @@
 server:
   port: ${PORT:8080}
+  tomcat:
+    threads:
+      max: 10
+      min-spare: 2
+    max-connections: 50
+    accept-count: 20
+  compression:
+    enabled: true
+    mime-types: text/html,text/xml,text/plain,text/css,text/javascript,application/javascript,application/json
 
 spring:
   application:
@@ -12,6 +21,12 @@ spring:
     driver-class-name: org.h2.Driver
     username: sa
     password:
+    hikari:
+      maximum-pool-size: 3
+      minimum-idle: 1
+      idle-timeout: 30000
+      max-lifetime: 60000
+      connection-timeout: 20000
 
   jpa:
     hibernate:
