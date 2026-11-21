@@ -44,10 +44,28 @@ export const LoginPage: React.FC = () => {
       toast.success(`Welcome back, ${response.user.fullName}!`)
       navigate('/dashboard')
     } catch (err: unknown) {
-      // In local dev without backend running, allow demo login fallback
-      const error = err as { response?: { data?: { message?: string } } }
-      const msg = error.response?.data?.message || 'Failed to login. Please check your credentials.'
-      toast.error(msg)
+      const error = err as { response?: { data?: { message?: string }; status?: number } }
+      const status = error.response?.status
+
+      // If backend is sleeping/cold-starting (502/503/timeout), allow demo login fallback for admin@trm.com
+      if ((!status || status === 502 || status === 503) && data.email === 'admin@trm.com' && data.password === 'admin123') {
+        login('demo-token-' + Date.now(), {
+          id: 1,
+          email: 'admin@trm.com',
+          fullName: 'Admin Manager',
+          role: 'MANAGER',
+        })
+        toast.success('Signed in as Admin Manager (Demo Fallback while backend wakes up)')
+        navigate('/dashboard')
+        return
+      }
+
+      if (status === 503 || status === 502 || !status) {
+        toast.error('Cloud server is waking up (Render free tier cold start). Please wait ~30s or use demo credentials.')
+      } else {
+        const msg = error.response?.data?.message || 'Failed to login. Please check your credentials.'
+        toast.error(msg)
+      }
     } finally {
       setIsLoading(false)
     }
